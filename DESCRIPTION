@@ -1,10 +1,19 @@
 Package: idtools
-Title: What the Package Does (One Line, Title Case)
+Title: Manipulate Lab Identifiers In Strings And Filenames
 Version: 0.0.0.9000
 Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"))
+    person("Joe M.", "Shaw", , "joseph.shaw2@mft.nhs.uk", role = c("aut", "cre"),
+    comment = c(ORCID = "0000-0002-5089-751X"))
 Description: What the package does (one paragraph).
 License: GPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 Config/roxygen2/version: 8.0.0
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+Imports: 
+    dplyr,
+    janitor,
+    stringr,
+    tibble
