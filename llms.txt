@@ -1,0 +1,80 @@
+# idtools
+
+`idtools` is an R package for extracting sample identifiers from
+filenames at the North West Genomic Laboratory Hub in Manchester, United
+Kingdom. It is intended to be used for validation or development
+projects, where key information, such as the DNA lab number, worksheet
+number and replicate suffix, are concatenated within the filename.
+
+The name is a pun on the concept of “tidy tools” from the [“Tidy Tools
+Manifesto”](https://tidyverse.tidyverse.org/articles/manifesto.html) by
+Hadley Wickham.
+
+## Installation
+
+You can install the development version of idtools from
+[GitHub](https://github.com/) with:
+
+``` r
+
+# install.packages("pak")
+pak::pak("joe-m-shaw/labtools")
+```
+
+## Example
+
+You can use `idtools` to extract sample identifiers stored in filenames.
+
+``` r
+
+
+library(idtools)
+
+filename <- "WS123456_12345678a"
+
+extract_worksheet(filename)
+#> [1] "WS123456"
+
+extract_labno(filename)
+#> [1] "12345678"
+
+extract_suffix(filename)
+#> [1] "a"
+```
+
+## Information Governance
+
+**No patient identifiable information should be included in this
+repository.**
+
+If you spot some, please let me know.
+
+For the purpose of testing functions, I have used generic examples for
+worksheet (WS123456) and lab number (12345678) values.
+
+Where examples of patient names are required, I have used character
+names from novels by Leo Tolstoy (Anna Karenina, Pierre Bezukhov etc).
+
+# Package index
+
+## All functions
+
+- [`extract_id()`](https://joe-m-shaw.github.io/idtools/reference/extract_id.md)
+  : Extract an identifier using regex
+- [`extract_igene_rno()`](https://joe-m-shaw.github.io/idtools/reference/extract_igene_rno.md)
+  : Extract iGene R number from a character string
+- [`extract_labno()`](https://joe-m-shaw.github.io/idtools/reference/extract_labno.md)
+  : Extract lab number from a string
+- [`extract_suffix()`](https://joe-m-shaw.github.io/idtools/reference/extract_suffix.md)
+  : Extract a sample replicate suffix from a string
+- [`extract_worksheet()`](https://joe-m-shaw.github.io/idtools/reference/extract_worksheet.md)
+  : Extract worksheet from a character string
+- [`mutate_filename()`](https://joe-m-shaw.github.io/idtools/reference/mutate_filename.md)
+  : Add filename and filepath to a dataframe
+- [`mutate_ids()`](https://joe-m-shaw.github.io/idtools/reference/mutate_ids.md)
+  : Add sample identifiers from filename as additional data columns
+- [`regex_filenames()`](https://joe-m-shaw.github.io/idtools/reference/regex_filenames.md)
+  : Regular expressions for filenames
+- [`regex_ids()`](https://joe-m-shaw.github.io/idtools/reference/regex_ids.md)
+  : Regular expressions for sample identifiers
+

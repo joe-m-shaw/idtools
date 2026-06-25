@@ -1,0 +1,56 @@
+# idtools
+
+`idtools` is an R package for extracting sample identifiers from
+filenames at the North West Genomic Laboratory Hub in Manchester, United
+Kingdom. It is intended to be used for validation or development
+projects, where key information, such as the DNA lab number, worksheet
+number and replicate suffix, are concatenated within the filename.
+
+The name is a pun on the concept of “tidy tools” from the [“Tidy Tools
+Manifesto”](https://tidyverse.tidyverse.org/articles/manifesto.html) by
+Hadley Wickham.
+
+## Installation
+
+You can install the development version of idtools from
+[GitHub](https://github.com/) with:
+
+``` r
+
+# install.packages("pak")
+pak::pak("joe-m-shaw/labtools")
+```
+
+## Example
+
+You can use `idtools` to extract sample identifiers stored in filenames.
+
+``` r
+
+
+library(idtools)
+
+filename <- "WS123456_12345678a"
+
+extract_worksheet(filename)
+#> [1] "WS123456"
+
+extract_labno(filename)
+#> [1] "12345678"
+
+extract_suffix(filename)
+#> [1] "a"
+```
+
+## Information Governance
+
+**No patient identifiable information should be included in this
+repository.**
+
+If you spot some, please let me know.
+
+For the purpose of testing functions, I have used generic examples for
+worksheet (WS123456) and lab number (12345678) values.
+
+Where examples of patient names are required, I have used character
+names from novels by Leo Tolstoy (Anna Karenina, Pierre Bezukhov etc).

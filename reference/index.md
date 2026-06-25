@@ -1,0 +1,22 @@
+# Package index
+
+## All functions
+
+- [`extract_id()`](https://joe-m-shaw.github.io/idtools/reference/extract_id.md)
+  : Extract an identifier using regex
+- [`extract_igene_rno()`](https://joe-m-shaw.github.io/idtools/reference/extract_igene_rno.md)
+  : Extract iGene R number from a character string
+- [`extract_labno()`](https://joe-m-shaw.github.io/idtools/reference/extract_labno.md)
+  : Extract lab number from a string
+- [`extract_suffix()`](https://joe-m-shaw.github.io/idtools/reference/extract_suffix.md)
+  : Extract a sample replicate suffix from a string
+- [`extract_worksheet()`](https://joe-m-shaw.github.io/idtools/reference/extract_worksheet.md)
+  : Extract worksheet from a character string
+- [`mutate_filename()`](https://joe-m-shaw.github.io/idtools/reference/mutate_filename.md)
+  : Add filename and filepath to a dataframe
+- [`mutate_ids()`](https://joe-m-shaw.github.io/idtools/reference/mutate_ids.md)
+  : Add sample identifiers from filename as additional data columns
+- [`regex_filenames()`](https://joe-m-shaw.github.io/idtools/reference/regex_filenames.md)
+  : Regular expressions for filenames
+- [`regex_ids()`](https://joe-m-shaw.github.io/idtools/reference/regex_ids.md)
+  : Regular expressions for sample identifiers
