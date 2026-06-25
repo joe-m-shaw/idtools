@@ -54,3 +54,8 @@ worksheet (WS123456) and lab number (12345678) values.
 
 Where examples of patient names are required, I have used character
 names from novels by Leo Tolstoy (Anna Karenina, Pierre Bezukhov etc).
+
+## Logo
+
+The `idtools` logo is made using an [Flaticon image created by
+Nuricon](https://www.flaticon.com/free-icon/crimping-pliers_10476996?term=plier&related_id=10476996).
