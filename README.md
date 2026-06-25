@@ -1,9 +1,10 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# idtools
+# idtools <a href="https://joe-m-shaw.github.io/idtools/"><img src="man/figures/logo.png" align="right" height="136" alt="idtools website" /></a>
 
 <!-- badges: start -->
+
 <!-- badges: end -->
 
 `idtools` is an R package for extracting sample identifiers from
@@ -58,3 +59,8 @@ worksheet (WS123456) and lab number (12345678) values.
 
 Where examples of patient names are required, I have used character
 names from novels by Leo Tolstoy (Anna Karenina, Pierre Bezukhov etc).
+
+## Logo
+
+The `idtools` logo is made using an [Flaticon image created by
+Nuricon](https://www.flaticon.com/free-icon/crimping-pliers_10476996?term=plier&related_id=10476996).
