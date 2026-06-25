@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# idtools <a href="https://joe-m-shaw.github.io/idtools/"><img src="man/figures/logo.png" align="right" height="136" alt="idtools website" /></a>
+# idtools <a href="https://joe-m-shaw.github.io/idtools/"><img src="man/figures/logo.png" align="right" height="250" alt="idtools website" /></a>
 
 <!-- badges: start -->
 

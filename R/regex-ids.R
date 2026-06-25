@@ -1,7 +1,7 @@
 #' Regular expressions for sample identifiers
 #'
 #' This function is a centralised place for regular expressions for extracting
-#' different identitiers.
+#' different identifiers.
 #' Regular expressions are written as raw strings using `stringr::regex` which
 #' makes them easier to understand and maintain.
 #' The ["Regular Expressions" chapter in "R for Data Science"](https://r4ds.hadley.nz/regexps.html)
