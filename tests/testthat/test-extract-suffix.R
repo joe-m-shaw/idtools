@@ -16,3 +16,13 @@ test_that("labno at the end of the string is handled as empty suffix", {
                "")
 
 })
+
+test_that("different letters are handled as suffixes", {
+
+  expect_equal(extract_suffix("WS123456_12345678z"),
+               "z")
+
+})
+
+
+

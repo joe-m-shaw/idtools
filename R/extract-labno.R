@@ -18,6 +18,6 @@ extract_labno <- function(input){
 
   extract_id(input = input,
              pattern = regex_ids()$labno_suffix$regex,
-             group = regex_ids()$labno_suffix$labno)
+             group = regex_ids()$labno_suffix$labno_group)
 
 }

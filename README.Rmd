@@ -18,38 +18,52 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of idtools is to ...
+`idtools` is an R package for extracting sample identifiers from filenames at the
+North West Genomic Laboratory Hub in Manchester, United Kingdom. 
+It is intended to be used for validation or development projects, where key 
+information, such as the DNA lab number, worksheet number and replicate suffix, 
+are concatenated within the filename. 
+
+The name is a pun on the concept of "tidy tools" from the ["Tidy Tools Manifesto"](https://tidyverse.tidyverse.org/articles/manifesto.html) by Hadley
+Wickham.
 
 ## Installation
 
 You can install the development version of idtools from [GitHub](https://github.com/) with:
 
-``` r
+```{r}
 # install.packages("pak")
 pak::pak("joe-m-shaw/idtools")
 ```
 
 ## Example
 
-This is a basic example which shows you how to solve a common problem:
+You can use `idtools` to extract sample identifiers stored in
+filenames.
 
-```{r example}
+```{r}
+
 library(idtools)
-## basic example code
+
+filename <- "WS123456_12345678a"
+
+extract_worksheet(filename)
+
+extract_labno(filename)
+
+extract_suffix(filename)
+
 ```
 
-What is special about using `README.Rmd` instead of just `README.md`? You can include R chunks like so:
+## Information Governance
 
-```{r cars}
-summary(cars)
-```
+**No patient identifiable information should be included in this
+repository.**
 
-You'll still need to render `README.Rmd` regularly, to keep `README.md` up-to-date. `devtools::build_readme()` is handy for this.
+If you spot some, please let me know.
 
-You can also embed plots, for example:
+For the purpose of testing functions, I have used generic examples for
+worksheet (WS123456) and lab number (12345678) values.
 
-```{r pressure, echo = FALSE}
-plot(pressure)
-```
-
-In that case, don't forget to commit and push the resulting figure files, so they display on GitHub and CRAN.
+Where examples of patient names are required, I have used character
+names from novels by Leo Tolstoy (Anna Karenina, Pierre Bezukhov etc).

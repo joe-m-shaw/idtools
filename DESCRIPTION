@@ -4,7 +4,7 @@ Version: 0.0.0.9000
 Authors@R: 
     person("Joe M.", "Shaw", , "joseph.shaw2@mft.nhs.uk", role = c("aut", "cre"),
     comment = c(ORCID = "0000-0002-5089-751X"))
-Description: What the package does (one paragraph).
+Description: idtools is a package for extracting sample identifiers from filenames at the North West Genomic Laboratory Hub in Manchester, United Kingdom. It is intended to be used for validation or development projects, where key information, such as the DNA lab number, worksheet number and replicate suffix, are concatenated within the filename. 
 License: GPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

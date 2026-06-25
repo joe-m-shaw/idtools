@@ -20,3 +20,17 @@ test_that("error is thrown with empty string", {
 
 })
 
+test_that("error is thrown with dataframe input", {
+
+  test_df <- data.frame(
+    "labno" = c("12345678")
+  )
+
+  expect_error(extract_id(test_df,
+             regex_ids()$labno_suffix$regex,
+             regex_ids()$labno_suffix$labno_group),
+             regexp = "input must be a string")
+
+})
+
+

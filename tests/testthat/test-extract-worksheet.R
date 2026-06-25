@@ -15,4 +15,9 @@ test_that("error is thrown if more than 6 digits in worksheet number", {
 
 })
 
+test_that("worksheet without additional text is handled", {
 
+  expect_equal(extract_worksheet("WS123456"),
+               "WS123456")
+
+})

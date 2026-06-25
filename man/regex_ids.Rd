@@ -10,8 +10,12 @@ regex_ids()
 A named list of regular expressions for different identifiers
 }
 \description{
-Labno is specified as having non-digits on either side, to prevent
-extracting 8 digits from a longer string of digits.
+This function is a centralised place for regular expressions for extracting
+different identitiers.
+Regular expressions are written as raw strings using \code{stringr::regex} which
+makes them easier to understand and maintain.
+The \href{https://r4ds.hadley.nz/regexps.html}{"Regular Expressions" chapter in "R for Data Science"}
+is a great resource for understanding regular expressions.
 }
 \examples{
 regex_ids()$labno_suffix

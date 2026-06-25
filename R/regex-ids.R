@@ -1,7 +1,11 @@
 #' Regular expressions for sample identifiers
 #'
-#' Labno is specified as having non-digits on either side, to prevent
-#' extracting 8 digits from a longer string of digits.
+#' This function is a centralised place for regular expressions for extracting
+#' different identitiers.
+#' Regular expressions are written as raw strings using `stringr::regex` which
+#' makes them easier to understand and maintain.
+#' The ["Regular Expressions" chapter in "R for Data Science"](https://r4ds.hadley.nz/regexps.html)
+#' is a great resource for understanding regular expressions.
 #'
 #' @returns A named list of regular expressions for different identifiers
 #' @export
@@ -29,7 +33,7 @@ regex_ids <- function(){
         (^|\D+)       # Either the start of string or non-digit characters (to
                       # prevent pulling out 8 digits from longer digit strings)
         (\d{8})       # Lab number: 8 digits
-        (a|b|c|d|)    # Suffix: either a-d or empty
+        ([a-z]{1}|)   # Suffix: either lowercase letter or empty
         (\D+|$)       # Either a non-digit character or end of the string
         ]",
         comments = TRUE),
