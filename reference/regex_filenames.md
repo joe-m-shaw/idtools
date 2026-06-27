@@ -4,9 +4,6 @@
 different filename formats. These regex can be used for finding files
 within the laboratory directories.
 
-Primarily these are files which are outputted from CLC pipelines for the
-PanSolid and PanHaem next generation sequencing workflows.
-
 ## Usage
 
 ``` r

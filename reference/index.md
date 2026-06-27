@@ -13,7 +13,7 @@
 - [`extract_worksheet()`](https://joe-m-shaw.github.io/idtools/reference/extract_worksheet.md)
   : Extract worksheet from a character string
 - [`mutate_ids()`](https://joe-m-shaw.github.io/idtools/reference/mutate_ids.md)
-  : Add sample identifiers from a filename as additional data columns
+  : Add sample identifiers from a filename as new columns
 - [`regex_filenames()`](https://joe-m-shaw.github.io/idtools/reference/regex_filenames.md)
   : Regular expressions for filenames
 - [`regex_ids()`](https://joe-m-shaw.github.io/idtools/reference/regex_ids.md)
