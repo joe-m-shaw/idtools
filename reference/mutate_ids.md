@@ -19,7 +19,7 @@ using `mutate_ids` is provided in the vignette.
 ## Usage
 
 ``` r
-mutate_ids(df, id_col = filename)
+mutate_ids(df, id_col)
 ```
 
 ## Arguments
@@ -30,8 +30,7 @@ mutate_ids(df, id_col = filename)
 
 - id_col:
 
-  The column in the dataframe which includes the filename. Defaults to
-  "filename".
+  The column in the dataframe which includes the filename.
 
 ## Value
 
@@ -51,7 +50,7 @@ results_df <- tibble::tribble(
 
 # Use `mutate_ids` to separate identifiers
 results_df |>
-  mutate_ids()
+  mutate_ids(filename)
 #> # A tibble: 3 × 7
 #>   result     filename labno suffix worksheet labno_suffix labno_suffix_worksheet
 #>   <chr>      <chr>    <chr> <chr>  <chr>     <chr>        <chr>                 

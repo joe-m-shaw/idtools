@@ -221,19 +221,17 @@ column, so an alternative approach is to use `set_names` and the
 xlsx_data <- xlsx_files |> 
   purrr::map(\(xlsx_files) readxl::read_excel(xlsx_files)) |> 
   rlang::set_names(xlsx_files) |> 
-  purrr::list_rbind(names_to = "filename") |> 
-  idtools::mutate_ids() 
+  purrr::list_rbind(names_to = "filename") 
 
 xlsx_data
-#> # A tibble: 5 × 8
-#>   filename                      metric value labno suffix worksheet labno_suffix
-#>   <chr>                         <chr>  <dbl> <chr> <chr>  <chr>     <chr>       
-#> 1 data//Quality-control-patien… noise   0.2  1234… "a"    WS123456  12345678a   
-#> 2 data//Quality-control-patien… noise   0.3  1234… "b"    WS123456  12345678b   
-#> 3 data//Quality-control-patien… noise   0.25 1234… "c"    WS123456  12345678c   
-#> 4 data//Quality-control-patien… noise   0.3  2345… ""     WS123456  23456789    
-#> 5 data//Quality-control-patien… noise   0.15 3456… ""     WS123456  34567890    
-#> # ℹ 1 more variable: labno_suffix_worksheet <chr>
+#> # A tibble: 5 × 3
+#>   filename                                               metric value
+#>   <chr>                                                  <chr>  <dbl>
+#> 1 data//Quality-control-patient1-12345678a-WS123456.xlsx noise   0.2 
+#> 2 data//Quality-control-patient1-12345678b-WS123456.xlsx noise   0.3 
+#> 3 data//Quality-control-patient1-12345678c-WS123456.xlsx noise   0.25
+#> 4 data//Quality-control-patient2-23456789-WS123456.xlsx  noise   0.3 
+#> 5 data//Quality-control-patient3-34567890-WS123456.xlsx  noise   0.15
 ```
 
 Then, just as with the csv files, the identifiers can be extracted using
@@ -243,7 +241,7 @@ changed.
 ``` r
 
 xlsx_data_with_names <- xlsx_data |> 
-  idtools::mutate_ids()
+  idtools::mutate_ids(id_col = filename)
 
 xlsx_data_with_names
 #> # A tibble: 5 × 8

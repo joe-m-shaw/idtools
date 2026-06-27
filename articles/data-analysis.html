@@ -247,25 +247,23 @@
 <code class="sourceCode R"><span><span class="va">xlsx_data</span> <span class="op">&lt;-</span> <span class="va">xlsx_files</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">map</a></span><span class="op">(</span>\<span class="op">(</span><span class="va">xlsx_files</span><span class="op">)</span> <span class="fu">readxl</span><span class="fu">::</span><span class="fu"><a href="https://readxl.tidyverse.org/reference/read_excel.html" class="external-link">read_excel</a></span><span class="op">(</span><span class="va">xlsx_files</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu">rlang</span><span class="fu">::</span><span class="fu"><a href="https://rlang.r-lib.org/reference/set_names.html" class="external-link">set_names</a></span><span class="op">(</span><span class="va">xlsx_files</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/list_c.html" class="external-link">list_rbind</a></span><span class="op">(</span>names_to <span class="op">=</span> <span class="st">"filename"</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu">idtools</span><span class="fu">::</span><span class="fu"><a href="../reference/mutate_ids.html">mutate_ids</a></span><span class="op">(</span><span class="op">)</span> </span>
+<span>  <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/list_c.html" class="external-link">list_rbind</a></span><span class="op">(</span>names_to <span class="op">=</span> <span class="st">"filename"</span><span class="op">)</span> </span>
 <span></span>
 <span><span class="va">xlsx_data</span></span>
-<span><span class="co">#&gt; # A tibble: 5 × 8</span></span>
-<span><span class="co">#&gt;   filename                      metric value labno suffix worksheet labno_suffix</span></span>
-<span><span class="co">#&gt;   &lt;chr&gt;                         &lt;chr&gt;  &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;     &lt;chr&gt;       </span></span>
-<span><span class="co">#&gt; 1 data//Quality-control-patien… noise   0.2  1234… "a"    WS123456  12345678a   </span></span>
-<span><span class="co">#&gt; 2 data//Quality-control-patien… noise   0.3  1234… "b"    WS123456  12345678b   </span></span>
-<span><span class="co">#&gt; 3 data//Quality-control-patien… noise   0.25 1234… "c"    WS123456  12345678c   </span></span>
-<span><span class="co">#&gt; 4 data//Quality-control-patien… noise   0.3  2345… ""     WS123456  23456789    </span></span>
-<span><span class="co">#&gt; 5 data//Quality-control-patien… noise   0.15 3456… ""     WS123456  34567890    </span></span>
-<span><span class="co">#&gt; # ℹ 1 more variable: labno_suffix_worksheet &lt;chr&gt;</span></span></code></pre></div>
+<span><span class="co">#&gt; # A tibble: 5 × 3</span></span>
+<span><span class="co">#&gt;   filename                                               metric value</span></span>
+<span><span class="co">#&gt;   &lt;chr&gt;                                                  &lt;chr&gt;  &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt; 1 data//Quality-control-patient1-12345678a-WS123456.xlsx noise   0.2 </span></span>
+<span><span class="co">#&gt; 2 data//Quality-control-patient1-12345678b-WS123456.xlsx noise   0.3 </span></span>
+<span><span class="co">#&gt; 3 data//Quality-control-patient1-12345678c-WS123456.xlsx noise   0.25</span></span>
+<span><span class="co">#&gt; 4 data//Quality-control-patient2-23456789-WS123456.xlsx  noise   0.3 </span></span>
+<span><span class="co">#&gt; 5 data//Quality-control-patient3-34567890-WS123456.xlsx  noise   0.15</span></span></code></pre></div>
 </div>
 <p>Then, just as with the csv files, the identifiers can be extracted using <code>mutate_ids</code>, which still works even though the filename format has changed.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">xlsx_data_with_names</span> <span class="op">&lt;-</span> <span class="va">xlsx_data</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu">idtools</span><span class="fu">::</span><span class="fu"><a href="../reference/mutate_ids.html">mutate_ids</a></span><span class="op">(</span><span class="op">)</span></span>
+<span>  <span class="fu">idtools</span><span class="fu">::</span><span class="fu"><a href="../reference/mutate_ids.html">mutate_ids</a></span><span class="op">(</span>id_col <span class="op">=</span> <span class="va">filename</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">xlsx_data_with_names</span></span>
 <span><span class="co">#&gt; # A tibble: 5 × 8</span></span>
