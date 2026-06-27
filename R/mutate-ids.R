@@ -1,17 +1,38 @@
-#' Add sample identifiers from filename as additional data columns
+#' Add sample identifiers from a filename as additional data columns
 #'
-#' This function extracts the 3 common identifiers (worksheet, labno and
-#' suffix) which are included in filenames.
+#' @description
+#' `mutate_ids` extracts the three most common sample identifiers (worksheet,
+#' labno and suffix) from a column
+#' within a dataframe, and adds them as new separate columns with
+#' `dplyr::mutate`.
+#' Details on the formats of each identifier are included in the documentation
+#' for `regex_ids`.
 #'
-#' Patient name and NGS panel are both not included in `mutate_ids`, as they
-#' are not always present in filenames.
+#' This function is particularly effective when combined with the pipe (|>)
+#' operator as it takes a dataframe as its input.
+#' Extra detail of using `mutate_ids` is provided in the vignette.
 #'
 #' @param df The dataframe to add identifiers to
-#' @param id_col The column in the dataframe which includes the filename
+#' @param id_col The column in the dataframe which includes the filename.
+#' Defaults to "filename".
 #'
 #' @returns The original dataframe with additional columns of identifiers
 #' from the filename column
 #' @export
+#'
+#' @examples
+#'
+#' # Dataframe of results from multiple files with filename as a column
+#' results_df <- tibble::tribble(
+#' ~result, ~filename,
+#' "Variant detected", "WS123456_12345678a_PierreBEZUKHOV.xlsx",
+#' "Variant not detected", "WS123456_23456789_AnnaKARENINA.xlsx",
+#' "Variant not detected", "WS123456_34567890_IvanILYICH.xlsx")
+#'
+#' # Use `mutate_ids` to separate identifiers
+#' results_df |>
+#'   mutate_ids()
+#'
 mutate_ids <- function(df,
                        id_col = filename){
 

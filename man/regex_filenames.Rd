@@ -10,10 +10,10 @@ regex_filenames()
 A named list of regular expressions
 }
 \description{
-This function acts as a centralised place for storing regular expressions for
-filenames.
-}
-\details{
+\code{regex_filenames} is a function holding regular expressions (regex) for
+different filename formats. These regex can be used for finding files
+within the laboratory directories.
+
 Primarily these are files which are outputted from CLC pipelines for the
 PanSolid and PanHaem next generation sequencing workflows.
 }
@@ -27,7 +27,11 @@ where Excel files may already be open.
 }
 \examples{
 
-files <- c("Annotated_file.xlsx", "Annotated_file.json", "Annotated_file.csv")
+files <- c("Annotated_file.xlsx",
+           "$Annotated_file.xlsx",
+           "Annotated_file.json",
+           "Annotated_file.csv")
 
-grep(pattern = regex_filenames()$excel_annotated, x = files, value = TRUE)
+grep(pattern = regex_filenames()$pansolid_excel_annotated, x = files, value = TRUE)
+
 }

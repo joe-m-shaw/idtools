@@ -23,6 +23,3 @@ test_that("different letters are handled as suffixes", {
                "z")
 
 })
-
-
-

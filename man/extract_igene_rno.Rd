@@ -13,12 +13,12 @@ extract_igene_rno(input)
 The iGene R number as a string
 }
 \description{
-The iGene database uses R numbers to identify individual referrals.
-}
-\details{
-The R number is R, followed by the year as 2 digits (2026 = 26) and then
-a random string of 5 alphanumeric characters.
+\code{extract_igene_rno} extracts the iGene referral number from a string,
+using \code{extract_ids}. A description of the format of iGene referral numbers
+is included in the documentation for \code{regex_ids}.
+#'
 }
 \examples{
 extract_igene_rno("WS123456_R26-12AB")
+
 }

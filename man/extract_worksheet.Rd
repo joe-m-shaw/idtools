@@ -13,10 +13,12 @@ extract_worksheet(input)
 The worksheet identifier as a string
 }
 \description{
-The worksheet identifier is "WS" followed by 6 digits. Worksheet numbers
-increase over time, and do not reset to 0 at the beginning of
-each year.
+\code{extract_worksheet} extracts the worksheet identifier from an input string,
+relying on \code{extract_id} and \code{regex_ids}.
+Details of the worksheet number format are given in the documentation for
+\code{regex_ids}.
 }
 \examples{
 extract_worksheet("WS123456_12345678")
+
 }

@@ -1,7 +1,9 @@
 #' Regular expressions for filenames
 #'
-#' This function acts as a centralised place for storing regular expressions for
-#' filenames.
+#' @description
+#' `regex_filenames` is a function holding regular expressions (regex) for
+#' different filename formats. These regex can be used for finding files
+#' within the laboratory directories.
 #'
 #' Primarily these are files which are outputted from CLC pipelines for the
 #' PanSolid and PanHaem next generation sequencing workflows.
@@ -18,14 +20,18 @@
 #'
 #' @examples
 #'
-#' files <- c("Annotated_file.xlsx", "Annotated_file.json", "Annotated_file.csv")
+#' files <- c("Annotated_file.xlsx",
+#'            "$Annotated_file.xlsx",
+#'            "Annotated_file.json",
+#'            "Annotated_file.csv")
 #'
-#' grep(pattern = regex_filenames()$excel_annotated, x = files, value = TRUE)
+#' grep(pattern = regex_filenames()$pansolid_excel_annotated, x = files, value = TRUE)
+#'
 regex_filenames <- function(){
 
   output_list <- list(
-    "excel_annotated" = "^Annotated_.*\\.xlsx$",
-    "excel_unannotated" = "^Results_SNVs_Indels.*\\.xlsx$"
+    "pansolid_excel_annotated" = "^Annotated_.*\\.xlsx$",
+    "pansolid_excel_unannotated" = "^Results_SNVs_Indels.*\\.xlsx$"
   )
 
   return(output_list)

@@ -14,12 +14,16 @@ A character string of the suffix. Inputs without a suffix with
 return "".
 }
 \description{
-When multiple replicates of a DNA lab number (labno) are tested on the same
-worksheet, a letter is added directly after each labno.
-}
-\details{
-Example: 12345678a, 12345678b, 12345678c
+\code{extract_suffix} extracts the letter suffix from after a DNA lab number.
+Letter suffixes are used when samples are tested in multiple replicates
+(Examples: 12345678a, 12345678b, 12345678c).
+More detail is provided in the documentation for \code{regex_ids}.
 }
 \examples{
+# Example with suffix
 extract_suffix("WS123456_12345678a_replicate1")
+
+# Empty string returned when no suffix is present
+extract_suffix("WS123456_12345678_replicate1")
+
 }
