@@ -1,6 +1,8 @@
 # Extract iGene R number from a character string
 
-The iGene database uses R numbers to identify individual referrals.
+`extract_igene_rno` extracts the iGene referral number from a string,
+using `extract_ids`. A description of the format of iGene referral
+numbers is included in the documentation for `regex_ids`. \#'
 
 ## Usage
 
@@ -17,11 +19,6 @@ extract_igene_rno(input)
 ## Value
 
 The iGene R number as a string
-
-## Details
-
-The R number is R, followed by the year as 2 digits (2026 = 26) and then
-a random string of 5 alphanumeric characters.
 
 ## Examples
 

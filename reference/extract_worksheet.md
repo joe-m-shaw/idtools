@@ -1,7 +1,8 @@
 # Extract worksheet from a character string
 
-The worksheet identifier is "WS" followed by 6 digits. Worksheet numbers
-increase over time, and do not reset to 0 at the beginning of each year.
+`extract_worksheet` extracts the worksheet identifier from an input
+string, relying on `extract_id` and `regex_ids`. Details of the
+worksheet number format are given in the documentation for `regex_ids`.
 
 ## Usage
 

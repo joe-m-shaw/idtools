@@ -1,7 +1,9 @@
 # Extract lab number from a string
 
-The DNA "lab number" (labno) is an eight digit numeric string which is
-used to identify DNA samples at the Manchester Genomic Laboratory Hub.
+`extract_labno` extracts the DNA lab number (labno) from an input
+string, using `extract_id` and `regex_ids`. A full description of the
+format of the labno identifier is included in the documentation for
+`regex_ids`.
 
 ## Usage
 
@@ -18,12 +20,6 @@ extract_labno(input)
 ## Value
 
 The lab number as a string
-
-## Details
-
-The labno has the year as the first 2 digits (2026 = 26) and the
-remaining 6 digits increase from 1. Example: the first sample of 2026
-would have labno 26000001.
 
 ## Examples
 

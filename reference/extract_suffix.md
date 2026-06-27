@@ -1,7 +1,9 @@
 # Extract a sample replicate suffix from a string
 
-When multiple replicates of a DNA lab number (labno) are tested on the
-same worksheet, a letter is added directly after each labno.
+`extract_suffix` extracts the letter suffix from after a DNA lab number.
+Letter suffixes are used when samples are tested in multiple replicates
+(Examples: 12345678a, 12345678b, 12345678c). More detail is provided in
+the documentation for `regex_ids`.
 
 ## Usage
 
@@ -20,13 +22,14 @@ extract_suffix(input)
 A character string of the suffix. Inputs without a suffix with return
 "".
 
-## Details
-
-Example: 12345678a, 12345678b, 12345678c
-
 ## Examples
 
 ``` r
+# Example with suffix
 extract_suffix("WS123456_12345678a_replicate1")
 #> [1] "a"
+
+# Empty string returned when no suffix is present
+extract_suffix("WS123456_12345678_replicate1")
+#> [1] ""
 ```
