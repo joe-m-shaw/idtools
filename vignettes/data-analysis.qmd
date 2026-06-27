@@ -187,8 +187,7 @@ result.
 xlsx_data <- xlsx_files |> 
   purrr::map(\(xlsx_files) readxl::read_excel(xlsx_files)) |> 
   rlang::set_names(xlsx_files) |> 
-  purrr::list_rbind(names_to = "filename") |> 
-  idtools::mutate_ids() 
+  purrr::list_rbind(names_to = "filename") 
 
 xlsx_data
 
@@ -201,7 +200,7 @@ Then, just as with the csv files, the identifiers can be extracted using
 #| label: mutate-ids-excel
 
 xlsx_data_with_names <- xlsx_data |> 
-  idtools::mutate_ids()
+  idtools::mutate_ids(id_col = filename)
 
 xlsx_data_with_names
 

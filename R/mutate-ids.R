@@ -19,7 +19,8 @@
 #'
 #' @param df The dataframe to add identifiers to
 #' @param id_col The column in the dataframe which includes the filename.
-#' Defaults to "filename".
+#'
+#' @importFrom rlang .data
 #'
 #' @returns The original dataframe with additional columns of identifiers
 #' from the filename column
@@ -36,10 +37,10 @@
 #'
 #' # Use `mutate_ids` to separate identifiers
 #' results_df |>
-#'   mutate_ids()
+#'   mutate_ids(filename)
 #'
 mutate_ids <- function(df,
-                       id_col = filename){
+                       id_col){
 
   if(!is.data.frame(df)){
     stop("input must be a dataframe")
@@ -51,8 +52,10 @@ mutate_ids <- function(df,
       labno = extract_labno({{ id_col }}),
       suffix = extract_suffix({{ id_col }}),
       worksheet = extract_worksheet({{ id_col }}),
-      labno_suffix = paste0(labno, suffix),
-      labno_suffix_worksheet = paste0(labno_suffix, "_", worksheet)) |>
+      labno_suffix = paste0(.data$labno, .data$suffix),
+      labno_suffix_worksheet = paste0(.data$labno_suffix,
+                                      "_",
+                                      .data$worksheet)) |>
     dplyr::ungroup()
 
   if(anyNA.data.frame(output)){

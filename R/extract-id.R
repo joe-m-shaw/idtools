@@ -30,15 +30,15 @@
 #'
 extract_id <- function(input, pattern, group) {
 
-  if (!is.character(input)) stop("input must be a string")
+  if (any(!is.character(input))) stop("input must be a string")
 
-  if (input == "") stop("input must not be empty")
+  if (any(input == "")) stop("input must not be empty")
 
   output <- stringr::str_extract(string = input,
                                            pattern = pattern,
                                            group = group)
 
-  if (is.na(output)) warning("NA value returned")
+  if (any(is.na(output))) warning("NA value returned")
 
   return(output)
 

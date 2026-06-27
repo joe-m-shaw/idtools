@@ -12,7 +12,7 @@ test_that("mutate_ids works with old xlsx format without panel name", {
     "filename" = "Annotated_WS123456_12345678a_PierreBEZUKHOV.xlsx"
   )
 
-  expect_equal(mutate_ids(df = input) |>
+  expect_equal(mutate_ids(df = input, id_col = filename) |>
                  dplyr::select(-filename),
                df_expected)
 
@@ -38,7 +38,7 @@ test_that("mutate_ids works with multiple rows", {
                                  "34567890c_WS123456")
   )
 
-  expect_equal(mutate_ids(input),
+  expect_equal(mutate_ids(input, filename),
                df_expected)
 
 })
@@ -49,7 +49,7 @@ test_that("mutate_ids works with new vcf format", {
     "filename" = "hotspots_WS123456_12345678a_PierreBEZUKHOV_S26_R3_601.vcf"
   )
 
-  expect_equal(mutate_ids(df = input) |>
+  expect_equal(mutate_ids(df = input, filename) |>
                  dplyr::select(-filename),
                df_expected)
 
@@ -61,7 +61,7 @@ test_that("mutate_ids works for annotated PanSolid format with panel name", {
     "filename" = "Annotated_v2PANSOLID_WS123456_12345678a_PierreBEZUKHOV_S26_R3_601.xlsx"
   )
 
-  expect_equal(mutate_ids(input) |>
+  expect_equal(mutate_ids(input, filename) |>
                  dplyr::select(-filename),
                df_expected)
 
@@ -73,7 +73,7 @@ test_that("mutate_ids works for unannotated PanSolid format", {
     "filename" = "Results_SNVs_Indels-WS123456_12345678a_PierreBEZUKHOV_S26_R3_601.xlsx"
   )
 
-  expect_equal(mutate_ids(input) |>
+  expect_equal(mutate_ids(input, filename) |>
                  dplyr::select(-filename),
                df_expected)
 
@@ -94,7 +94,7 @@ test_that("mutate_ids works for coverage txt file", {
     "labno_suffix_worksheet" = c("12345678_WS123456")
   )
 
-  expect_equal(mutate_ids(input),
+  expect_equal(mutate_ids(input, filename),
                df_expected)
 
 })
@@ -114,7 +114,7 @@ test_that("mutate_ids works without name and with json format", {
     "labno_suffix_worksheet" = c("12345678a_WS123456")
   )
 
-  expect_equal(mutate_ids(input),
+  expect_equal(mutate_ids(input, filename),
                df_expected)
 
 })
@@ -159,7 +159,7 @@ test_that("spaces, full-stops and hyphens between identifiers are handled correc
                                  "34567890c_WS123456")
   )
 
-  expect_equal(mutate_ids(input),
+  expect_equal(mutate_ids(input, filename),
                df_expected)
 
 })
@@ -178,7 +178,7 @@ test_that("filename with a different order is handled correctly", {
     "labno_suffix_worksheet" = c("12345678_WS123456")
     )
 
-  expect_equal(mutate_ids(input),
+  expect_equal(mutate_ids(input, filename),
                df_expected)
 
 })
@@ -197,7 +197,7 @@ test_that("mutate_ids handles addition of dev in the filename", {
       "labno_suffix_worksheet" = c("12345678_WS123456")
     )
 
-    expect_equal(mutate_ids(input),
+    expect_equal(mutate_ids(input, filename),
                  df_expected)
 
 })
@@ -216,7 +216,7 @@ test_that("RNA fusion QC filename is handled", {
     "filename" = "Results_QC_for_Fusion_Panel_Report-WS123456_12345678_R1.xlsx"
   )
 
-  expect_equal(mutate_ids(df = input) |>
+  expect_equal(mutate_ids(df = input, filename) |>
                  dplyr::select(-filename),
                df_expected_rna)
 
@@ -228,7 +228,7 @@ test_that("RNA fusion formatted filename is handled", {
     "filename" = "Formatted_Results_WS123456_12345678.xlsx.xlsx"
   )
 
-  expect_equal(mutate_ids(df = input) |>
+  expect_equal(mutate_ids(df = input, filename) |>
                  dplyr::select(-filename),
                df_expected_rna)
 
@@ -240,7 +240,7 @@ test_that("SeqOne HRD output filename is handled", {
     "filename" = "WS123456_12345678a_hrd-results.csv"
   )
 
-  expect_equal(mutate_ids(df = input) |>
+  expect_equal(mutate_ids(df = input, filename) |>
                  dplyr::select(-filename),
                df_expected)
 })

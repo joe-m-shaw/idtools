@@ -4,13 +4,12 @@
 \alias{mutate_ids}
 \title{Add sample identifiers from a filename as new columns}
 \usage{
-mutate_ids(df, id_col = filename)
+mutate_ids(df, id_col)
 }
 \arguments{
 \item{df}{The dataframe to add identifiers to}
 
-\item{id_col}{The column in the dataframe which includes the filename.
-Defaults to "filename".}
+\item{id_col}{The column in the dataframe which includes the filename.}
 }
 \value{
 The original dataframe with additional columns of identifiers
@@ -44,6 +43,6 @@ results_df <- tibble::tribble(
 
 # Use `mutate_ids` to separate identifiers
 results_df |>
-  mutate_ids()
+  mutate_ids(filename)
 
 }
