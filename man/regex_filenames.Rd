@@ -13,9 +13,6 @@ A named list of regular expressions
 \code{regex_filenames} is a function holding regular expressions (regex) for
 different filename formats. These regex can be used for finding files
 within the laboratory directories.
-
-Primarily these are files which are outputted from CLC pipelines for the
-PanSolid and PanHaem next generation sequencing workflows.
 }
 \note{
 When an Excel file is open, a temporary file with "~$" at the start of

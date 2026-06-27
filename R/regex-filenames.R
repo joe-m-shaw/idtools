@@ -5,9 +5,6 @@
 #' different filename formats. These regex can be used for finding files
 #' within the laboratory directories.
 #'
-#' Primarily these are files which are outputted from CLC pipelines for the
-#' PanSolid and PanHaem next generation sequencing workflows.
-#'
 #' @note When an Excel file is open, a temporary file with "~$" at the start of
 #' the filename will be created. Selecting these temporary files can lead
 #' to issues when trying to read files with R. The "^" at the beginning of each

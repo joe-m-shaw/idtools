@@ -2,7 +2,7 @@
 % Please edit documentation in R/mutate-ids.R
 \name{mutate_ids}
 \alias{mutate_ids}
-\title{Add sample identifiers from a filename as additional data columns}
+\title{Add sample identifiers from a filename as new columns}
 \usage{
 mutate_ids(df, id_col = filename)
 }
@@ -19,10 +19,15 @@ from the filename column
 \description{
 \code{mutate_ids} extracts the three most common sample identifiers (worksheet,
 labno and suffix) from a column
-within a dataframe, and adds them as new separate columns with
+within a dataframe, and adds them as separate columns with
 \code{dplyr::mutate}.
 Details on the formats of each identifier are included in the documentation
 for \code{regex_ids}.
+
+\code{mutate_ids} adds extra columns for labno, suffix and worksheet, and then
+also concatenates the identifiers together as labno_suffix and
+labno_suffix_worksheet. This is intended to given ultimate flexibility
+when filtering or grouping data from multiple experiments.
 
 This function is particularly effective when combined with the pipe (|>)
 operator as it takes a dataframe as its input.

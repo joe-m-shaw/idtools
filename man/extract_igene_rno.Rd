@@ -16,7 +16,6 @@ The iGene R number as a string
 \code{extract_igene_rno} extracts the iGene referral number from a string,
 using \code{extract_ids}. A description of the format of iGene referral numbers
 is included in the documentation for \code{regex_ids}.
-#'
 }
 \examples{
 extract_igene_rno("WS123456_R26-12AB")

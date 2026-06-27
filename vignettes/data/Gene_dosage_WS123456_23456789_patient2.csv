@@ -1,0 +1,6 @@
+gene,log2r
+EGFR,0.2
+BRAF,0.1
+CDKN2A,-2.5
+CDKN2B,-2.55
+MDM2,0.01

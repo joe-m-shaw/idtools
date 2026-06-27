@@ -10,11 +10,20 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 Config/roxygen2/version: 8.0.0
 Suggests: 
+    knitr,
+    rmarkdown,
+    quarto,
+    ggplot2,
+    janitor,
+    tibble,
+    purrr,
+    readr,
+    readxl,
+    rlang,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 Imports: 
     dplyr,
-    janitor,
-    stringr,
-    tibble
+    stringr
 URL: https://joe-m-shaw.github.io/idtools/
+VignetteBuilder: knitr, quarto

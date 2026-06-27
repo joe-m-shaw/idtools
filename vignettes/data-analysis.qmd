@@ -1,0 +1,208 @@
+---
+title: "Data analysis with idtools"
+vignette: >
+  %\VignetteIndexEntry{Data analysis with idtools}
+  %\VignetteEngine{quarto::html}
+  %\VignetteEncoding{UTF-8}
+knitr:
+  opts_chunk:
+    collapse: true
+    comment: '#>'
+---
+
+```{r}
+#| label: setup
+library(idtools)
+library(purrr)
+library(readr)
+library(ggplot2)
+library(readxl)
+```
+
+# Development projects, data analysis and the tidyverse
+
+Developing new genetic tests involves working with data.
+
+This means collating data from multiple worksheets, samples and replicates.
+
+It also usually involves combining data which has been stored in different
+file types (.csv, .xlsx, .vcf etc).
+
+This is called ["Exploratory Data Analysis" (EDA)](https://r4ds.hadley.nz/EDA.html)
+and 
+
+# A common scenario
+
+A common scenario faced in test development is where there are multiple files
+of results, and the identifiers for each sample are included in the filename.
+
+Here is an example with 5 csv which contain results for
+fictional patients. All these files are saved in a folder called "data".
+
+```{r}
+#| label: filepaths
+#| echo: FALSE
+
+csv_files <- list.files(path = "data/",
+           pattern = ".*.csv",
+           full.names = TRUE)
+
+csv_files
+
+```
+
+Each csv file contains the dosage (log2 ratio) results for 5 genes of interest.
+
+```{r}
+#| echo: FALSE
+
+readr::read_csv(csv_files[1])
+
+```
+
+In order to analyse the data, two steps need to be completed:
+
+- The results from each individual file should be collated together in one
+dataframe
+
+- The sample identifiers from each filename should be added to the 
+dataframe as separate columns.
+
+## Collating the results
+
+Collating the file contents can be achieved
+by applying the `read_csv` function from `readr` to all the files, using
+the `map` function from `purrr`.
+Specifying `id="filepath"` in the call to `read_csv` adds the full filepath
+as a new column to the contents of each file.
+
+```{r}
+#| include: TRUE
+#| label: collate-csv-files
+
+csv_data <- csv_files |> 
+  purrr::map(\(csv_files) readr::read_csv(csv_files,
+                            id = "filepath",
+                            show_col_types = FALSE)) |> 
+  purrr::list_rbind() 
+
+csv_data
+
+```
+
+## Adding sample identifiers
+
+The `mutate_ids` function from `idtools` can then be applied to the new 
+"filepath" column of the collated data.
+This function extracts the DNA lab number (labno), replicate suffix and worksheet
+number from the filepath, and adds each identifier as a new column.
+
+```{r}
+#| include: TRUE
+#| label: mutate-ids
+
+csv_data_with_names <- csv_data |> 
+  idtools::mutate_ids(id_col = filepath)
+
+csv_data_with_names
+
+```
+
+## Analysing the collated data
+
+Now that the data is all together in a single dataframe, including the sample
+identifiers, it can be more easily analysed.
+
+For example, the data can be quickly filtered to return only the results for 
+the *EGFR* gene.
+
+```{r}
+#| include: TRUE
+
+csv_data_with_names |> 
+  dplyr::filter(gene == "EGFR")
+
+```
+
+The data can also be filtered to show the results for the 3 different replicates 
+of sample 12345678.
+
+```{r}
+#| include: TRUE
+
+csv_data_with_names |> 
+  dplyr::filter(labno == "12345678")
+
+```
+
+And the `ggplot2` package from the tidyverse can be used to visualise all the
+results.
+
+```{r}
+#| echo: FALSE
+
+ggplot(csv_data_with_names, aes(x = gene, y = log2r)) +
+  geom_jitter(shape = 21, size = 3,
+              alpha = 0.6, width = 0.1, aes(fill = suffix)) +
+  theme_bw()+
+  theme(axis.text.x = element_text(angle = 90)) +
+  facet_wrap(~labno) +
+  labs(x = "Gene", y = "Log2 ratio",
+       title = "Collated csv file results",
+       subtitle = "Facetted by lab number",
+       fill = "Suffix")
+
+```
+
+## Reading different file types
+
+The same data folder also contains 5 Excel files
+containing the "noise" metric for each sample replicate.
+However, the filename format is different: the identifiers are in a different
+order and hyphens are used instead of underscores.
+
+```{r}
+#| label: xlsx-files
+
+xlsx_files <- list.files(path = "data/",
+           pattern = ".*.xlsx",
+           full.names = TRUE)
+
+xlsx_files
+
+readxl::read_excel(xlsx_files[1])
+
+```
+
+Similarly to before, the contents of the xlsx files can be collated together
+using the `readxl` package.
+The `read_excel` function from `readxl` does not include an option to add the
+filepath as a separate column, so an alternative approach is to use
+`set_names` and the "names_to" argument in `list_rbind` to achieve the same
+result.
+
+```{r}
+#| label: collate-xlsx-files
+
+xlsx_data <- xlsx_files |> 
+  purrr::map(\(xlsx_files) readxl::read_excel(xlsx_files)) |> 
+  rlang::set_names(xlsx_files) |> 
+  purrr::list_rbind(names_to = "filename") |> 
+  idtools::mutate_ids() 
+
+xlsx_data
+
+```
+
+Then, just as with the csv files, the identifiers can be extracted using
+`mutate_ids`, which still works even though the filename format has changed.
+
+```{r}
+#| label: mutate-ids-excel
+
+xlsx_data_with_names <- xlsx_data |> 
+  idtools::mutate_ids()
+
+xlsx_data_with_names
+
+```
