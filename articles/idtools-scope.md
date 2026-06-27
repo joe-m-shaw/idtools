@@ -1,0 +1,69 @@
+# The scope of idtools
+
+`idtools` is intended to work with tidyverse packages like `purrr` and
+`readr` to make manipulating lab identifiers easier. A few key design
+choices of `idtools` are summarised below.
+
+## Why is there no `extract_patient_name` function?
+
+There is no function for extracting patient names in `idtools` for the
+following reasons:
+
+- **Patient names are not always included in filenames.** Patient names
+  may be included in filenames if analysis is performed using on-prem
+  servers, but if data is analysed using cloud computing then patient
+  names are removed. This means datasets can include a mixture of files
+  with and without patient names depending on how they were processed.
+
+- **Not all samples are from people.** Some samples are control samples,
+  such as mixtures of different DNA samples or cell lines. These samples
+  may be given a “name” or they may not, and the name may or may not
+  follow the standard format of “forename surname”. Example:
+  “HorizonPositiveControl”.
+
+- **Some samples may be for research.** Patient samples collected for
+  research will be anonymised, and the research identifier may be
+  included in place of the sample name. The research identifier may also
+  include numbers or other non-letter characters. Example: “study0001”
+
+These reasons mean that designing a regular expression to identify a
+patient name in a filename is complicated. One option is to use the
+position of the name in the string relative to more consistent
+identifiers, like lab number and worksheet number, but this is then
+inflexible when the order of identifiers changes.
+
+A better approach is to get patient names from databases such as iGene
+or DNA Database.
+
+## Why is there no `read_with_filename` function?
+
+Given that `idtools` is based around extracting identifiers from
+filenames, an earlier version included a generic function to read files
+as dataframes and then add on a new column containing the filename. The
+prototype function is shown below, and the idea was that it could be
+combined with multiple `read` functions like
+[`readr::read_csv`](https://readr.tidyverse.org/reference/read_delim.html),
+[`readxl::read_excel`](https://readxl.tidyverse.org/reference/read_excel.html)
+and `vcfR::read.vcfR`, and then piped into `mutate_ids`.
+
+``` r
+
+read_with_filename <- function(filepath, read_fn) {
+
+  output <- read_fn(filepath, ...) |>
+    dplyr::mutate(filepath = filepath,
+                  filename = basename(filepath))
+
+  return(output)
+
+}
+```
+
+However, there are better options for adding the filepath as a new
+column when reading files. For
+[`readr::read_csv`](https://readr.tidyverse.org/reference/read_delim.html)
+there is the “id” argument, and for other functions there is the option
+of using
+[`rlang::set_names`](https://rlang.r-lib.org/reference/set_names.html)
+and `purrr:list_rbind`. Both these options are shown in more detail in
+the “Data analysis with idtools” vignette.

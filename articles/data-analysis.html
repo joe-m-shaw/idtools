@@ -37,6 +37,7 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="../articles/data-analysis.html">Data analysis with idtools</a></li>
+    <li><a class="dropdown-item" href="../articles/idtools-scope.html">The scope of idtools</a></li>
   </ul>
 </li>
       </ul>
@@ -66,164 +67,816 @@
 
 
 
-    <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://joe-m-shaw.github.io/idtools/">idtools</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://purrr.tidyverse.org/" class="external-link">purrr</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://readr.tidyverse.org" class="external-link">readr</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://readxl.tidyverse.org" class="external-link">readxl</a></span><span class="op">)</span></span></code></pre></div>
-</div>
-<section class="section level2"><h2 id="development-projects-data-analysis-and-the-tidyverse">Development projects, data analysis and the tidyverse<a class="anchor" aria-label="anchor" href="#development-projects-data-analysis-and-the-tidyverse"></a>
+    <p><code>idtools</code> is designed to be used at the North West Genomic Laboratory Hub for projects involving data analysis of multiple results files. This vignette goes through an example of a common scenario where <code>idtools</code> can help.</p>
+<section class="section level2"><h2 id="lots-of-files-with-long-filenames">Lots of files with long filenames<a class="anchor" aria-label="anchor" href="#lots-of-files-with-long-filenames"></a>
 </h2>
-<p>Developing new genetic tests involves working with data.</p>
-<p>This means collating data from multiple worksheets, samples and replicates.</p>
-<p>It also usually involves combining data which has been stored in different file types (.csv, .xlsx, .vcf etc).</p>
-<p>This is called <a href="https://r4ds.hadley.nz/EDA.html" class="external-link">“Exploratory Data Analysis” (EDA)</a> and</p>
-</section><section class="section level2"><h2 id="a-common-scenario">A common scenario<a class="anchor" aria-label="anchor" href="#a-common-scenario"></a>
-</h2>
-<p>A common scenario faced in test development is where there are multiple files of results, and the identifiers for each sample are included in the filename.</p>
-<p>Here is an example with 5 csv which contain results for fictional patients. All these files are saved in a folder called “data”.</p>
+<p>A common scenario faced in genetic test development is where there are multiple files of results, and the identifiers for each sample are included in long filenames.</p>
+<p>Here is an example with 5 .csv files which contain gene dosage results for fictional patients. All these files are saved in a folder called “data”.</p>
 <div class="cell">
-<pre><code><span><span class="co">#&gt; [1] "data//Gene_dosage_WS123456_12345678a_patient1.csv"</span></span>
+<div class="sourceCode cell-code" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">csv_files</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.files.html" class="external-link">list.files</a></span><span class="op">(</span>path <span class="op">=</span> <span class="st">"data/"</span>,</span>
+<span>           pattern <span class="op">=</span> <span class="st">".*.csv"</span>,</span>
+<span>           full.names <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">csv_files</span></span>
+<span><span class="co">#&gt; [1] "data//Gene_dosage_WS123456_12345678a_patient1.csv"</span></span>
 <span><span class="co">#&gt; [2] "data//Gene_dosage_WS123456_12345678b_patient1.csv"</span></span>
 <span><span class="co">#&gt; [3] "data//Gene_dosage_WS123456_12345678c_patient1.csv"</span></span>
-<span><span class="co">#&gt; [4] "data//Gene_dosage_WS123456_23456789_patient2.csv"</span></span>
-<span><span class="co">#&gt; [5] "data//Gene_dosage_WS123456_34567890_patient3.csv"</span></span></code></pre>
+<span><span class="co">#&gt; [4] "data//Gene_dosage_WS123456_23456789_patient2.csv" </span></span>
+<span><span class="co">#&gt; [5] "data//Gene_dosage_WS123456_34567890_patient3.csv"</span></span></code></pre></div>
 </div>
-<p>Each csv file contains the dosage (log2 ratio) results for 5 genes of interest.</p>
+<p>Each .csv file contains the dosage (log2 ratio) results for 5 genes of interest.</p>
 <div class="cell">
-<pre><code><span><span class="co">#&gt; Rows: 5 Columns: 2</span></span>
-<span><span class="co">#&gt; ── Column specification ────────────────────────────────────────────────────────</span></span>
-<span><span class="co">#&gt; Delimiter: ","</span></span>
-<span><span class="co">#&gt; chr (1): gene</span></span>
-<span><span class="co">#&gt; dbl (1): log2r</span></span>
-<span><span class="co">#&gt;</span></span>
-<span><span class="co">#&gt; ℹ Use `spec()` to retrieve the full column specification for this data.</span></span>
-<span><span class="co">#&gt; ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</span></span>
-<span><span class="co">#&gt; # A tibble: 5 × 2</span></span>
-<span><span class="co">#&gt;   gene   log2r</span></span>
-<span><span class="co">#&gt;   &lt;chr&gt;  &lt;dbl&gt;</span></span>
-<span><span class="co">#&gt; 1 EGFR   10.4</span></span>
-<span><span class="co">#&gt; 2 BRAF    0.1</span></span>
-<span><span class="co">#&gt; 3 CDKN2A -0.3</span></span>
-<span><span class="co">#&gt; 4 CDKN2B -0.35</span></span>
-<span><span class="co">#&gt; 5 MDM2    0.2</span></span></code></pre>
+<div id="tbl-csv-data-example" class="cell quarto-float quarto-figure quarto-figure-center">
+<figure class="quarto-float quarto-float-tbl"><figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-csv-data-example-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table 1: Contents of a single .csv file
+</figcaption><div aria-describedby="tbl-csv-data-example-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="table cell caption-top">
+<thead><tr class="header">
+<th style="text-align: left;">gene</th>
+<th style="text-align: right;">log2r</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">EGFR</td>
+<td style="text-align: right;">10.40</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BRAF</td>
+<td style="text-align: right;">0.10</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">CDKN2A</td>
+<td style="text-align: right;">-0.30</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">CDKN2B</td>
+<td style="text-align: right;">-0.35</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">MDM2</td>
+<td style="text-align: right;">0.20</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
 </div>
 <p>In order to analyse the data, two steps need to be completed:</p>
-<ul>
+<ol type="1">
 <li><p>The results from each individual file should be collated together in one dataframe</p></li>
 <li><p>The sample identifiers from each filename should be added to the dataframe as separate columns.</p></li>
-</ul>
-<section class="level2"><h3 id="collating-the-results">Collating the results<a class="anchor" aria-label="anchor" href="#collating-the-results"></a>
+</ol>
+<section class="level2"><h3 id="collating-the-results-with-purrr-and-readr">1. Collating the results with <code>purrr</code> and <code>readr</code>
+<a class="anchor" aria-label="anchor" href="#collating-the-results-with-purrr-and-readr"></a>
 </h3>
 <p>Collating the file contents can be achieved by applying the <code>read_csv</code> function from <code>readr</code> to all the files, using the <code>map</code> function from <code>purrr</code>. Specifying <code>id="filepath"</code> in the call to <code>read_csv</code> adds the full filepath as a new column to the contents of each file.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">csv_data</span> <span class="op">&lt;-</span> <span class="va">csv_files</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">map</a></span><span class="op">(</span>\<span class="op">(</span><span class="va">csv_files</span><span class="op">)</span> <span class="fu">readr</span><span class="fu">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html" class="external-link">read_csv</a></span><span class="op">(</span><span class="va">csv_files</span>,</span>
 <span>                            id <span class="op">=</span> <span class="st">"filepath"</span>,</span>
 <span>                            show_col_types <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/list_c.html" class="external-link">list_rbind</a></span><span class="op">(</span><span class="op">)</span> </span>
-<span></span>
-<span><span class="va">csv_data</span></span>
-<span><span class="co">#&gt; # A tibble: 25 × 3</span></span>
-<span><span class="co">#&gt;    filepath                                          gene   log2r</span></span>
-<span><span class="co">#&gt;    &lt;chr&gt;                                             &lt;chr&gt;  &lt;dbl&gt;</span></span>
-<span><span class="co">#&gt;  1 data//Gene_dosage_WS123456_12345678a_patient1.csv EGFR   10.4 </span></span>
-<span><span class="co">#&gt;  2 data//Gene_dosage_WS123456_12345678a_patient1.csv BRAF    0.1 </span></span>
-<span><span class="co">#&gt;  3 data//Gene_dosage_WS123456_12345678a_patient1.csv CDKN2A -0.3 </span></span>
-<span><span class="co">#&gt;  4 data//Gene_dosage_WS123456_12345678a_patient1.csv CDKN2B -0.35</span></span>
-<span><span class="co">#&gt;  5 data//Gene_dosage_WS123456_12345678a_patient1.csv MDM2    0.2 </span></span>
-<span><span class="co">#&gt;  6 data//Gene_dosage_WS123456_12345678b_patient1.csv EGFR    9.9 </span></span>
-<span><span class="co">#&gt;  7 data//Gene_dosage_WS123456_12345678b_patient1.csv BRAF    0.15</span></span>
-<span><span class="co">#&gt;  8 data//Gene_dosage_WS123456_12345678b_patient1.csv CDKN2A -0.35</span></span>
-<span><span class="co">#&gt;  9 data//Gene_dosage_WS123456_12345678b_patient1.csv CDKN2B -0.4 </span></span>
-<span><span class="co">#&gt; 10 data//Gene_dosage_WS123456_12345678b_patient1.csv MDM2    0.12</span></span>
-<span><span class="co">#&gt; # ℹ 15 more rows</span></span></code></pre></div>
+<span>  <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/list_c.html" class="external-link">list_rbind</a></span><span class="op">(</span><span class="op">)</span> </span></code></pre></div>
 </div>
-</section><section class="level2"><h3 id="adding-sample-identifiers">Adding sample identifiers<a class="anchor" aria-label="anchor" href="#adding-sample-identifiers"></a>
+<p>This creates a dataframe containing the results from all the csv files.</p>
+<div class="cell">
+<div id="tbl-collated-csv-data" class="cell quarto-float quarto-figure quarto-figure-center">
+<figure class="quarto-float quarto-float-tbl"><figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-collated-csv-data-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table 2: Collated gene dosage data with filepaths
+</figcaption><div aria-describedby="tbl-collated-csv-data-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="table cell caption-top">
+<thead><tr class="header">
+<th style="text-align: left;">filepath</th>
+<th style="text-align: left;">gene</th>
+<th style="text-align: right;">log2r</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">data//Gene_dosage_WS123456_12345678a_patient1.csv</td>
+<td style="text-align: left;">EGFR</td>
+<td style="text-align: right;">10.40</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">data//Gene_dosage_WS123456_12345678a_patient1.csv</td>
+<td style="text-align: left;">BRAF</td>
+<td style="text-align: right;">0.10</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">data//Gene_dosage_WS123456_12345678a_patient1.csv</td>
+<td style="text-align: left;">CDKN2A</td>
+<td style="text-align: right;">-0.30</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">data//Gene_dosage_WS123456_12345678a_patient1.csv</td>
+<td style="text-align: left;">CDKN2B</td>
+<td style="text-align: right;">-0.35</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">data//Gene_dosage_WS123456_12345678a_patient1.csv</td>
+<td style="text-align: left;">MDM2</td>
+<td style="text-align: right;">0.20</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">data//Gene_dosage_WS123456_12345678b_patient1.csv</td>
+<td style="text-align: left;">EGFR</td>
+<td style="text-align: right;">9.90</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">data//Gene_dosage_WS123456_12345678b_patient1.csv</td>
+<td style="text-align: left;">BRAF</td>
+<td style="text-align: right;">0.15</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">data//Gene_dosage_WS123456_12345678b_patient1.csv</td>
+<td style="text-align: left;">CDKN2A</td>
+<td style="text-align: right;">-0.35</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">data//Gene_dosage_WS123456_12345678b_patient1.csv</td>
+<td style="text-align: left;">CDKN2B</td>
+<td style="text-align: right;">-0.40</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">data//Gene_dosage_WS123456_12345678b_patient1.csv</td>
+<td style="text-align: left;">MDM2</td>
+<td style="text-align: right;">0.12</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">data//Gene_dosage_WS123456_12345678c_patient1.csv</td>
+<td style="text-align: left;">EGFR</td>
+<td style="text-align: right;">10.10</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">data//Gene_dosage_WS123456_12345678c_patient1.csv</td>
+<td style="text-align: left;">BRAF</td>
+<td style="text-align: right;">0.10</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">data//Gene_dosage_WS123456_12345678c_patient1.csv</td>
+<td style="text-align: left;">CDKN2A</td>
+<td style="text-align: right;">-0.25</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">data//Gene_dosage_WS123456_12345678c_patient1.csv</td>
+<td style="text-align: left;">CDKN2B</td>
+<td style="text-align: right;">-0.30</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">data//Gene_dosage_WS123456_12345678c_patient1.csv</td>
+<td style="text-align: left;">MDM2</td>
+<td style="text-align: right;">0.10</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">data//Gene_dosage_WS123456_23456789_patient2.csv</td>
+<td style="text-align: left;">EGFR</td>
+<td style="text-align: right;">0.20</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">data//Gene_dosage_WS123456_23456789_patient2.csv</td>
+<td style="text-align: left;">BRAF</td>
+<td style="text-align: right;">0.10</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">data//Gene_dosage_WS123456_23456789_patient2.csv</td>
+<td style="text-align: left;">CDKN2A</td>
+<td style="text-align: right;">-2.50</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">data//Gene_dosage_WS123456_23456789_patient2.csv</td>
+<td style="text-align: left;">CDKN2B</td>
+<td style="text-align: right;">-2.55</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">data//Gene_dosage_WS123456_23456789_patient2.csv</td>
+<td style="text-align: left;">MDM2</td>
+<td style="text-align: right;">0.01</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">data//Gene_dosage_WS123456_34567890_patient3.csv</td>
+<td style="text-align: left;">EGFR</td>
+<td style="text-align: right;">0.30</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">data//Gene_dosage_WS123456_34567890_patient3.csv</td>
+<td style="text-align: left;">BRAF</td>
+<td style="text-align: right;">0.20</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">data//Gene_dosage_WS123456_34567890_patient3.csv</td>
+<td style="text-align: left;">CDKN2A</td>
+<td style="text-align: right;">-0.50</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">data//Gene_dosage_WS123456_34567890_patient3.csv</td>
+<td style="text-align: left;">CDKN2B</td>
+<td style="text-align: right;">0.01</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">data//Gene_dosage_WS123456_34567890_patient3.csv</td>
+<td style="text-align: left;">MDM2</td>
+<td style="text-align: right;">0.20</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+</section><section class="level2"><h3 id="adding-sample-identifiers-with-idtools">2. Adding sample identifiers with <code>idtools</code>
+<a class="anchor" aria-label="anchor" href="#adding-sample-identifiers-with-idtools"></a>
 </h3>
 <p>The <code>mutate_ids</code> function from <code>idtools</code> can then be applied to the new “filepath” column of the collated data. This function extracts the DNA lab number (labno), replicate suffix and worksheet number from the filepath, and adds each identifier as a new column.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">csv_data_with_names</span> <span class="op">&lt;-</span> <span class="va">csv_data</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu">idtools</span><span class="fu">::</span><span class="fu"><a href="../reference/mutate_ids.html">mutate_ids</a></span><span class="op">(</span>id_col <span class="op">=</span> <span class="va">filepath</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">csv_data_with_names</span></span>
-<span><span class="co">#&gt; # A tibble: 25 × 8</span></span>
-<span><span class="co">#&gt;    filepath                      gene  log2r labno suffix worksheet labno_suffix</span></span>
-<span><span class="co">#&gt;    &lt;chr&gt;                         &lt;chr&gt; &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;     &lt;chr&gt;       </span></span>
-<span><span class="co">#&gt;  1 data//Gene_dosage_WS123456_1… EGFR  10.4  1234… a      WS123456  12345678a   </span></span>
-<span><span class="co">#&gt;  2 data//Gene_dosage_WS123456_1… BRAF   0.1  1234… a      WS123456  12345678a   </span></span>
-<span><span class="co">#&gt;  3 data//Gene_dosage_WS123456_1… CDKN… -0.3  1234… a      WS123456  12345678a   </span></span>
-<span><span class="co">#&gt;  4 data//Gene_dosage_WS123456_1… CDKN… -0.35 1234… a      WS123456  12345678a   </span></span>
-<span><span class="co">#&gt;  5 data//Gene_dosage_WS123456_1… MDM2   0.2  1234… a      WS123456  12345678a   </span></span>
-<span><span class="co">#&gt;  6 data//Gene_dosage_WS123456_1… EGFR   9.9  1234… b      WS123456  12345678b   </span></span>
-<span><span class="co">#&gt;  7 data//Gene_dosage_WS123456_1… BRAF   0.15 1234… b      WS123456  12345678b   </span></span>
-<span><span class="co">#&gt;  8 data//Gene_dosage_WS123456_1… CDKN… -0.35 1234… b      WS123456  12345678b   </span></span>
-<span><span class="co">#&gt;  9 data//Gene_dosage_WS123456_1… CDKN… -0.4  1234… b      WS123456  12345678b   </span></span>
-<span><span class="co">#&gt; 10 data//Gene_dosage_WS123456_1… MDM2   0.12 1234… b      WS123456  12345678b   </span></span>
-<span><span class="co">#&gt; # ℹ 15 more rows</span></span>
-<span><span class="co">#&gt; # ℹ 1 more variable: labno_suffix_worksheet &lt;chr&gt;</span></span></code></pre></div>
+<span>  <span class="fu">idtools</span><span class="fu">::</span><span class="fu"><a href="../reference/mutate_ids.html">mutate_ids</a></span><span class="op">(</span>id_col <span class="op">=</span> <span class="va">filepath</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="cell">
+<div id="tbl-collated-data-with-names" class="cell quarto-float quarto-figure quarto-figure-center">
+<figure class="quarto-float quarto-float-tbl"><figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-collated-data-with-names-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table 3: Collated gene dosage data with separated identifiers
+</figcaption><div aria-describedby="tbl-collated-data-with-names-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="table cell caption-top">
+<colgroup>
+<col style="width: 40%">
+<col style="width: 7%">
+<col style="width: 5%">
+<col style="width: 8%">
+<col style="width: 10%">
+<col style="width: 18%">
+<col style="width: 5%">
+<col style="width: 4%">
+</colgroup>
+<thead><tr class="header">
+<th style="text-align: left;">filepath</th>
+<th style="text-align: left;">labno</th>
+<th style="text-align: left;">suffix</th>
+<th style="text-align: left;">worksheet</th>
+<th style="text-align: left;">labno_suffix</th>
+<th style="text-align: left;">labno_suffix_worksheet</th>
+<th style="text-align: left;">gene</th>
+<th style="text-align: right;">log2r</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">data//Gene_dosage_WS123456_12345678a_patient1.csv</td>
+<td style="text-align: left;">12345678</td>
+<td style="text-align: left;">a</td>
+<td style="text-align: left;">WS123456</td>
+<td style="text-align: left;">12345678a</td>
+<td style="text-align: left;">12345678a_WS123456</td>
+<td style="text-align: left;">EGFR</td>
+<td style="text-align: right;">10.40</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">data//Gene_dosage_WS123456_12345678a_patient1.csv</td>
+<td style="text-align: left;">12345678</td>
+<td style="text-align: left;">a</td>
+<td style="text-align: left;">WS123456</td>
+<td style="text-align: left;">12345678a</td>
+<td style="text-align: left;">12345678a_WS123456</td>
+<td style="text-align: left;">BRAF</td>
+<td style="text-align: right;">0.10</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">data//Gene_dosage_WS123456_12345678a_patient1.csv</td>
+<td style="text-align: left;">12345678</td>
+<td style="text-align: left;">a</td>
+<td style="text-align: left;">WS123456</td>
+<td style="text-align: left;">12345678a</td>
+<td style="text-align: left;">12345678a_WS123456</td>
+<td style="text-align: left;">CDKN2A</td>
+<td style="text-align: right;">-0.30</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">data//Gene_dosage_WS123456_12345678a_patient1.csv</td>
+<td style="text-align: left;">12345678</td>
+<td style="text-align: left;">a</td>
+<td style="text-align: left;">WS123456</td>
+<td style="text-align: left;">12345678a</td>
+<td style="text-align: left;">12345678a_WS123456</td>
+<td style="text-align: left;">CDKN2B</td>
+<td style="text-align: right;">-0.35</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">data//Gene_dosage_WS123456_12345678a_patient1.csv</td>
+<td style="text-align: left;">12345678</td>
+<td style="text-align: left;">a</td>
+<td style="text-align: left;">WS123456</td>
+<td style="text-align: left;">12345678a</td>
+<td style="text-align: left;">12345678a_WS123456</td>
+<td style="text-align: left;">MDM2</td>
+<td style="text-align: right;">0.20</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">data//Gene_dosage_WS123456_12345678b_patient1.csv</td>
+<td style="text-align: left;">12345678</td>
+<td style="text-align: left;">b</td>
+<td style="text-align: left;">WS123456</td>
+<td style="text-align: left;">12345678b</td>
+<td style="text-align: left;">12345678b_WS123456</td>
+<td style="text-align: left;">EGFR</td>
+<td style="text-align: right;">9.90</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">data//Gene_dosage_WS123456_12345678b_patient1.csv</td>
+<td style="text-align: left;">12345678</td>
+<td style="text-align: left;">b</td>
+<td style="text-align: left;">WS123456</td>
+<td style="text-align: left;">12345678b</td>
+<td style="text-align: left;">12345678b_WS123456</td>
+<td style="text-align: left;">BRAF</td>
+<td style="text-align: right;">0.15</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">data//Gene_dosage_WS123456_12345678b_patient1.csv</td>
+<td style="text-align: left;">12345678</td>
+<td style="text-align: left;">b</td>
+<td style="text-align: left;">WS123456</td>
+<td style="text-align: left;">12345678b</td>
+<td style="text-align: left;">12345678b_WS123456</td>
+<td style="text-align: left;">CDKN2A</td>
+<td style="text-align: right;">-0.35</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">data//Gene_dosage_WS123456_12345678b_patient1.csv</td>
+<td style="text-align: left;">12345678</td>
+<td style="text-align: left;">b</td>
+<td style="text-align: left;">WS123456</td>
+<td style="text-align: left;">12345678b</td>
+<td style="text-align: left;">12345678b_WS123456</td>
+<td style="text-align: left;">CDKN2B</td>
+<td style="text-align: right;">-0.40</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">data//Gene_dosage_WS123456_12345678b_patient1.csv</td>
+<td style="text-align: left;">12345678</td>
+<td style="text-align: left;">b</td>
+<td style="text-align: left;">WS123456</td>
+<td style="text-align: left;">12345678b</td>
+<td style="text-align: left;">12345678b_WS123456</td>
+<td style="text-align: left;">MDM2</td>
+<td style="text-align: right;">0.12</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">data//Gene_dosage_WS123456_12345678c_patient1.csv</td>
+<td style="text-align: left;">12345678</td>
+<td style="text-align: left;">c</td>
+<td style="text-align: left;">WS123456</td>
+<td style="text-align: left;">12345678c</td>
+<td style="text-align: left;">12345678c_WS123456</td>
+<td style="text-align: left;">EGFR</td>
+<td style="text-align: right;">10.10</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">data//Gene_dosage_WS123456_12345678c_patient1.csv</td>
+<td style="text-align: left;">12345678</td>
+<td style="text-align: left;">c</td>
+<td style="text-align: left;">WS123456</td>
+<td style="text-align: left;">12345678c</td>
+<td style="text-align: left;">12345678c_WS123456</td>
+<td style="text-align: left;">BRAF</td>
+<td style="text-align: right;">0.10</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">data//Gene_dosage_WS123456_12345678c_patient1.csv</td>
+<td style="text-align: left;">12345678</td>
+<td style="text-align: left;">c</td>
+<td style="text-align: left;">WS123456</td>
+<td style="text-align: left;">12345678c</td>
+<td style="text-align: left;">12345678c_WS123456</td>
+<td style="text-align: left;">CDKN2A</td>
+<td style="text-align: right;">-0.25</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">data//Gene_dosage_WS123456_12345678c_patient1.csv</td>
+<td style="text-align: left;">12345678</td>
+<td style="text-align: left;">c</td>
+<td style="text-align: left;">WS123456</td>
+<td style="text-align: left;">12345678c</td>
+<td style="text-align: left;">12345678c_WS123456</td>
+<td style="text-align: left;">CDKN2B</td>
+<td style="text-align: right;">-0.30</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">data//Gene_dosage_WS123456_12345678c_patient1.csv</td>
+<td style="text-align: left;">12345678</td>
+<td style="text-align: left;">c</td>
+<td style="text-align: left;">WS123456</td>
+<td style="text-align: left;">12345678c</td>
+<td style="text-align: left;">12345678c_WS123456</td>
+<td style="text-align: left;">MDM2</td>
+<td style="text-align: right;">0.10</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">data//Gene_dosage_WS123456_23456789_patient2.csv</td>
+<td style="text-align: left;">23456789</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">WS123456</td>
+<td style="text-align: left;">23456789</td>
+<td style="text-align: left;">23456789_WS123456</td>
+<td style="text-align: left;">EGFR</td>
+<td style="text-align: right;">0.20</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">data//Gene_dosage_WS123456_23456789_patient2.csv</td>
+<td style="text-align: left;">23456789</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">WS123456</td>
+<td style="text-align: left;">23456789</td>
+<td style="text-align: left;">23456789_WS123456</td>
+<td style="text-align: left;">BRAF</td>
+<td style="text-align: right;">0.10</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">data//Gene_dosage_WS123456_23456789_patient2.csv</td>
+<td style="text-align: left;">23456789</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">WS123456</td>
+<td style="text-align: left;">23456789</td>
+<td style="text-align: left;">23456789_WS123456</td>
+<td style="text-align: left;">CDKN2A</td>
+<td style="text-align: right;">-2.50</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">data//Gene_dosage_WS123456_23456789_patient2.csv</td>
+<td style="text-align: left;">23456789</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">WS123456</td>
+<td style="text-align: left;">23456789</td>
+<td style="text-align: left;">23456789_WS123456</td>
+<td style="text-align: left;">CDKN2B</td>
+<td style="text-align: right;">-2.55</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">data//Gene_dosage_WS123456_23456789_patient2.csv</td>
+<td style="text-align: left;">23456789</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">WS123456</td>
+<td style="text-align: left;">23456789</td>
+<td style="text-align: left;">23456789_WS123456</td>
+<td style="text-align: left;">MDM2</td>
+<td style="text-align: right;">0.01</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">data//Gene_dosage_WS123456_34567890_patient3.csv</td>
+<td style="text-align: left;">34567890</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">WS123456</td>
+<td style="text-align: left;">34567890</td>
+<td style="text-align: left;">34567890_WS123456</td>
+<td style="text-align: left;">EGFR</td>
+<td style="text-align: right;">0.30</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">data//Gene_dosage_WS123456_34567890_patient3.csv</td>
+<td style="text-align: left;">34567890</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">WS123456</td>
+<td style="text-align: left;">34567890</td>
+<td style="text-align: left;">34567890_WS123456</td>
+<td style="text-align: left;">BRAF</td>
+<td style="text-align: right;">0.20</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">data//Gene_dosage_WS123456_34567890_patient3.csv</td>
+<td style="text-align: left;">34567890</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">WS123456</td>
+<td style="text-align: left;">34567890</td>
+<td style="text-align: left;">34567890_WS123456</td>
+<td style="text-align: left;">CDKN2A</td>
+<td style="text-align: right;">-0.50</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">data//Gene_dosage_WS123456_34567890_patient3.csv</td>
+<td style="text-align: left;">34567890</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">WS123456</td>
+<td style="text-align: left;">34567890</td>
+<td style="text-align: left;">34567890_WS123456</td>
+<td style="text-align: left;">CDKN2B</td>
+<td style="text-align: right;">0.01</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">data//Gene_dosage_WS123456_34567890_patient3.csv</td>
+<td style="text-align: left;">34567890</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">WS123456</td>
+<td style="text-align: left;">34567890</td>
+<td style="text-align: left;">34567890_WS123456</td>
+<td style="text-align: left;">MDM2</td>
+<td style="text-align: right;">0.20</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
 </div>
 </section><section class="level2"><h3 id="analysing-the-collated-data">Analysing the collated data<a class="anchor" aria-label="anchor" href="#analysing-the-collated-data"></a>
 </h3>
 <p>Now that the data is all together in a single dataframe, including the sample identifiers, it can be more easily analysed.</p>
 <p>For example, the data can be quickly filtered to return only the results for the <em>EGFR</em> gene.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">csv_data_with_names</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">gene</span> <span class="op">==</span> <span class="st">"EGFR"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; # A tibble: 5 × 8</span></span>
-<span><span class="co">#&gt;   filepath                       gene  log2r labno suffix worksheet labno_suffix</span></span>
-<span><span class="co">#&gt;   &lt;chr&gt;                          &lt;chr&gt; &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;     &lt;chr&gt;       </span></span>
-<span><span class="co">#&gt; 1 data//Gene_dosage_WS123456_12… EGFR   10.4 1234… "a"    WS123456  12345678a   </span></span>
-<span><span class="co">#&gt; 2 data//Gene_dosage_WS123456_12… EGFR    9.9 1234… "b"    WS123456  12345678b   </span></span>
-<span><span class="co">#&gt; 3 data//Gene_dosage_WS123456_12… EGFR   10.1 1234… "c"    WS123456  12345678c   </span></span>
-<span><span class="co">#&gt; 4 data//Gene_dosage_WS123456_23… EGFR    0.2 2345… ""     WS123456  23456789    </span></span>
-<span><span class="co">#&gt; 5 data//Gene_dosage_WS123456_34… EGFR    0.3 3456… ""     WS123456  34567890    </span></span>
-<span><span class="co">#&gt; # ℹ 1 more variable: labno_suffix_worksheet &lt;chr&gt;</span></span></code></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">csv_data_with_names</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">gene</span> <span class="op">==</span> <span class="st">"EGFR"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div id="tbl-csv-data-gene" class="cell quarto-float quarto-figure quarto-figure-center">
+<figure class="quarto-float quarto-float-tbl"><figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-csv-data-gene-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table 4: Results for EGFR gene
+</figcaption><div aria-describedby="tbl-csv-data-gene-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="table cell caption-top">
+<colgroup>
+<col style="width: 40%">
+<col style="width: 7%">
+<col style="width: 5%">
+<col style="width: 8%">
+<col style="width: 10%">
+<col style="width: 18%">
+<col style="width: 4%">
+<col style="width: 4%">
+</colgroup>
+<thead><tr class="header">
+<th style="text-align: left;">filepath</th>
+<th style="text-align: left;">labno</th>
+<th style="text-align: left;">suffix</th>
+<th style="text-align: left;">worksheet</th>
+<th style="text-align: left;">labno_suffix</th>
+<th style="text-align: left;">labno_suffix_worksheet</th>
+<th style="text-align: left;">gene</th>
+<th style="text-align: right;">log2r</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">data//Gene_dosage_WS123456_12345678a_patient1.csv</td>
+<td style="text-align: left;">12345678</td>
+<td style="text-align: left;">a</td>
+<td style="text-align: left;">WS123456</td>
+<td style="text-align: left;">12345678a</td>
+<td style="text-align: left;">12345678a_WS123456</td>
+<td style="text-align: left;">EGFR</td>
+<td style="text-align: right;">10.4</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">data//Gene_dosage_WS123456_12345678b_patient1.csv</td>
+<td style="text-align: left;">12345678</td>
+<td style="text-align: left;">b</td>
+<td style="text-align: left;">WS123456</td>
+<td style="text-align: left;">12345678b</td>
+<td style="text-align: left;">12345678b_WS123456</td>
+<td style="text-align: left;">EGFR</td>
+<td style="text-align: right;">9.9</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">data//Gene_dosage_WS123456_12345678c_patient1.csv</td>
+<td style="text-align: left;">12345678</td>
+<td style="text-align: left;">c</td>
+<td style="text-align: left;">WS123456</td>
+<td style="text-align: left;">12345678c</td>
+<td style="text-align: left;">12345678c_WS123456</td>
+<td style="text-align: left;">EGFR</td>
+<td style="text-align: right;">10.1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">data//Gene_dosage_WS123456_23456789_patient2.csv</td>
+<td style="text-align: left;">23456789</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">WS123456</td>
+<td style="text-align: left;">23456789</td>
+<td style="text-align: left;">23456789_WS123456</td>
+<td style="text-align: left;">EGFR</td>
+<td style="text-align: right;">0.2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">data//Gene_dosage_WS123456_34567890_patient3.csv</td>
+<td style="text-align: left;">34567890</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">WS123456</td>
+<td style="text-align: left;">34567890</td>
+<td style="text-align: left;">34567890_WS123456</td>
+<td style="text-align: left;">EGFR</td>
+<td style="text-align: right;">0.3</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
 </div>
 <p>The data can also be filtered to show the results for the 3 different replicates of sample 12345678.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">csv_data_with_names</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">labno</span> <span class="op">==</span> <span class="st">"12345678"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; # A tibble: 15 × 8</span></span>
-<span><span class="co">#&gt;    filepath                      gene  log2r labno suffix worksheet labno_suffix</span></span>
-<span><span class="co">#&gt;    &lt;chr&gt;                         &lt;chr&gt; &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;     &lt;chr&gt;       </span></span>
-<span><span class="co">#&gt;  1 data//Gene_dosage_WS123456_1… EGFR  10.4  1234… a      WS123456  12345678a   </span></span>
-<span><span class="co">#&gt;  2 data//Gene_dosage_WS123456_1… BRAF   0.1  1234… a      WS123456  12345678a   </span></span>
-<span><span class="co">#&gt;  3 data//Gene_dosage_WS123456_1… CDKN… -0.3  1234… a      WS123456  12345678a   </span></span>
-<span><span class="co">#&gt;  4 data//Gene_dosage_WS123456_1… CDKN… -0.35 1234… a      WS123456  12345678a   </span></span>
-<span><span class="co">#&gt;  5 data//Gene_dosage_WS123456_1… MDM2   0.2  1234… a      WS123456  12345678a   </span></span>
-<span><span class="co">#&gt;  6 data//Gene_dosage_WS123456_1… EGFR   9.9  1234… b      WS123456  12345678b   </span></span>
-<span><span class="co">#&gt;  7 data//Gene_dosage_WS123456_1… BRAF   0.15 1234… b      WS123456  12345678b   </span></span>
-<span><span class="co">#&gt;  8 data//Gene_dosage_WS123456_1… CDKN… -0.35 1234… b      WS123456  12345678b   </span></span>
-<span><span class="co">#&gt;  9 data//Gene_dosage_WS123456_1… CDKN… -0.4  1234… b      WS123456  12345678b   </span></span>
-<span><span class="co">#&gt; 10 data//Gene_dosage_WS123456_1… MDM2   0.12 1234… b      WS123456  12345678b   </span></span>
-<span><span class="co">#&gt; 11 data//Gene_dosage_WS123456_1… EGFR  10.1  1234… c      WS123456  12345678c   </span></span>
-<span><span class="co">#&gt; 12 data//Gene_dosage_WS123456_1… BRAF   0.1  1234… c      WS123456  12345678c   </span></span>
-<span><span class="co">#&gt; 13 data//Gene_dosage_WS123456_1… CDKN… -0.25 1234… c      WS123456  12345678c   </span></span>
-<span><span class="co">#&gt; 14 data//Gene_dosage_WS123456_1… CDKN… -0.3  1234… c      WS123456  12345678c   </span></span>
-<span><span class="co">#&gt; 15 data//Gene_dosage_WS123456_1… MDM2   0.1  1234… c      WS123456  12345678c   </span></span>
-<span><span class="co">#&gt; # ℹ 1 more variable: labno_suffix_worksheet &lt;chr&gt;</span></span></code></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">csv_data_with_names</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">labno</span> <span class="op">==</span> <span class="st">"12345678"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div id="tbl-csv-data-labno" class="cell quarto-float quarto-figure quarto-figure-center">
+<figure class="quarto-float quarto-float-tbl"><figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-csv-data-labno-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table 5: Results for sample 12345678
+</figcaption><div aria-describedby="tbl-csv-data-labno-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="table cell caption-top">
+<colgroup>
+<col style="width: 40%">
+<col style="width: 7%">
+<col style="width: 5%">
+<col style="width: 8%">
+<col style="width: 10%">
+<col style="width: 18%">
+<col style="width: 5%">
+<col style="width: 4%">
+</colgroup>
+<thead><tr class="header">
+<th style="text-align: left;">filepath</th>
+<th style="text-align: left;">labno</th>
+<th style="text-align: left;">suffix</th>
+<th style="text-align: left;">worksheet</th>
+<th style="text-align: left;">labno_suffix</th>
+<th style="text-align: left;">labno_suffix_worksheet</th>
+<th style="text-align: left;">gene</th>
+<th style="text-align: right;">log2r</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">data//Gene_dosage_WS123456_12345678a_patient1.csv</td>
+<td style="text-align: left;">12345678</td>
+<td style="text-align: left;">a</td>
+<td style="text-align: left;">WS123456</td>
+<td style="text-align: left;">12345678a</td>
+<td style="text-align: left;">12345678a_WS123456</td>
+<td style="text-align: left;">EGFR</td>
+<td style="text-align: right;">10.40</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">data//Gene_dosage_WS123456_12345678a_patient1.csv</td>
+<td style="text-align: left;">12345678</td>
+<td style="text-align: left;">a</td>
+<td style="text-align: left;">WS123456</td>
+<td style="text-align: left;">12345678a</td>
+<td style="text-align: left;">12345678a_WS123456</td>
+<td style="text-align: left;">BRAF</td>
+<td style="text-align: right;">0.10</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">data//Gene_dosage_WS123456_12345678a_patient1.csv</td>
+<td style="text-align: left;">12345678</td>
+<td style="text-align: left;">a</td>
+<td style="text-align: left;">WS123456</td>
+<td style="text-align: left;">12345678a</td>
+<td style="text-align: left;">12345678a_WS123456</td>
+<td style="text-align: left;">CDKN2A</td>
+<td style="text-align: right;">-0.30</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">data//Gene_dosage_WS123456_12345678a_patient1.csv</td>
+<td style="text-align: left;">12345678</td>
+<td style="text-align: left;">a</td>
+<td style="text-align: left;">WS123456</td>
+<td style="text-align: left;">12345678a</td>
+<td style="text-align: left;">12345678a_WS123456</td>
+<td style="text-align: left;">CDKN2B</td>
+<td style="text-align: right;">-0.35</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">data//Gene_dosage_WS123456_12345678a_patient1.csv</td>
+<td style="text-align: left;">12345678</td>
+<td style="text-align: left;">a</td>
+<td style="text-align: left;">WS123456</td>
+<td style="text-align: left;">12345678a</td>
+<td style="text-align: left;">12345678a_WS123456</td>
+<td style="text-align: left;">MDM2</td>
+<td style="text-align: right;">0.20</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">data//Gene_dosage_WS123456_12345678b_patient1.csv</td>
+<td style="text-align: left;">12345678</td>
+<td style="text-align: left;">b</td>
+<td style="text-align: left;">WS123456</td>
+<td style="text-align: left;">12345678b</td>
+<td style="text-align: left;">12345678b_WS123456</td>
+<td style="text-align: left;">EGFR</td>
+<td style="text-align: right;">9.90</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">data//Gene_dosage_WS123456_12345678b_patient1.csv</td>
+<td style="text-align: left;">12345678</td>
+<td style="text-align: left;">b</td>
+<td style="text-align: left;">WS123456</td>
+<td style="text-align: left;">12345678b</td>
+<td style="text-align: left;">12345678b_WS123456</td>
+<td style="text-align: left;">BRAF</td>
+<td style="text-align: right;">0.15</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">data//Gene_dosage_WS123456_12345678b_patient1.csv</td>
+<td style="text-align: left;">12345678</td>
+<td style="text-align: left;">b</td>
+<td style="text-align: left;">WS123456</td>
+<td style="text-align: left;">12345678b</td>
+<td style="text-align: left;">12345678b_WS123456</td>
+<td style="text-align: left;">CDKN2A</td>
+<td style="text-align: right;">-0.35</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">data//Gene_dosage_WS123456_12345678b_patient1.csv</td>
+<td style="text-align: left;">12345678</td>
+<td style="text-align: left;">b</td>
+<td style="text-align: left;">WS123456</td>
+<td style="text-align: left;">12345678b</td>
+<td style="text-align: left;">12345678b_WS123456</td>
+<td style="text-align: left;">CDKN2B</td>
+<td style="text-align: right;">-0.40</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">data//Gene_dosage_WS123456_12345678b_patient1.csv</td>
+<td style="text-align: left;">12345678</td>
+<td style="text-align: left;">b</td>
+<td style="text-align: left;">WS123456</td>
+<td style="text-align: left;">12345678b</td>
+<td style="text-align: left;">12345678b_WS123456</td>
+<td style="text-align: left;">MDM2</td>
+<td style="text-align: right;">0.12</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">data//Gene_dosage_WS123456_12345678c_patient1.csv</td>
+<td style="text-align: left;">12345678</td>
+<td style="text-align: left;">c</td>
+<td style="text-align: left;">WS123456</td>
+<td style="text-align: left;">12345678c</td>
+<td style="text-align: left;">12345678c_WS123456</td>
+<td style="text-align: left;">EGFR</td>
+<td style="text-align: right;">10.10</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">data//Gene_dosage_WS123456_12345678c_patient1.csv</td>
+<td style="text-align: left;">12345678</td>
+<td style="text-align: left;">c</td>
+<td style="text-align: left;">WS123456</td>
+<td style="text-align: left;">12345678c</td>
+<td style="text-align: left;">12345678c_WS123456</td>
+<td style="text-align: left;">BRAF</td>
+<td style="text-align: right;">0.10</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">data//Gene_dosage_WS123456_12345678c_patient1.csv</td>
+<td style="text-align: left;">12345678</td>
+<td style="text-align: left;">c</td>
+<td style="text-align: left;">WS123456</td>
+<td style="text-align: left;">12345678c</td>
+<td style="text-align: left;">12345678c_WS123456</td>
+<td style="text-align: left;">CDKN2A</td>
+<td style="text-align: right;">-0.25</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">data//Gene_dosage_WS123456_12345678c_patient1.csv</td>
+<td style="text-align: left;">12345678</td>
+<td style="text-align: left;">c</td>
+<td style="text-align: left;">WS123456</td>
+<td style="text-align: left;">12345678c</td>
+<td style="text-align: left;">12345678c_WS123456</td>
+<td style="text-align: left;">CDKN2B</td>
+<td style="text-align: right;">-0.30</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">data//Gene_dosage_WS123456_12345678c_patient1.csv</td>
+<td style="text-align: left;">12345678</td>
+<td style="text-align: left;">c</td>
+<td style="text-align: left;">WS123456</td>
+<td style="text-align: left;">12345678c</td>
+<td style="text-align: left;">12345678c_WS123456</td>
+<td style="text-align: left;">MDM2</td>
+<td style="text-align: right;">0.10</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
 </div>
 <p>And the <code>ggplot2</code> package from the tidyverse can be used to visualise all the results.</p>
 <div class="cell">
 <div class="cell-output-display">
 <div>
-<figure><p><img src="data-analysis_files/figure-html/unnamed-chunk-4-1.png" width="672"></p>
+<figure><p><img src="data-analysis_files/figure-html/plot-1.png" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
 </section><section class="level2"><h3 id="reading-different-file-types">Reading different file types<a class="anchor" aria-label="anchor" href="#reading-different-file-types"></a>
 </h3>
-<p>The same data folder also contains 5 Excel files containing the “noise” metric for each sample replicate. However, the filename format is different: the identifiers are in a different order and hyphens are used instead of underscores.</p>
+<p>The same data folder also contains 5 Excel files of quality control information. However, the filename format is different: the identifiers are in a different order to the csv files, and hyphens are used instead of underscores.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">xlsx_files</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.files.html" class="external-link">list.files</a></span><span class="op">(</span>path <span class="op">=</span> <span class="st">"data/"</span>,</span>
 <span>           pattern <span class="op">=</span> <span class="st">".*.xlsx"</span>,</span>
 <span>           full.names <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
@@ -235,46 +888,178 @@
 <span><span class="co">#&gt; [4] "data//Quality-control-patient2-23456789-WS123456.xlsx" </span></span>
 <span><span class="co">#&gt; [5] "data//Quality-control-patient3-34567890-WS123456.xlsx"</span></span>
 <span></span>
-<span><span class="fu">readxl</span><span class="fu">::</span><span class="fu"><a href="https://readxl.tidyverse.org/reference/read_excel.html" class="external-link">read_excel</a></span><span class="op">(</span><span class="va">xlsx_files</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="co">#&gt; # A tibble: 1 × 2</span></span>
-<span><span class="co">#&gt;   metric value</span></span>
-<span><span class="co">#&gt;   &lt;chr&gt;  &lt;dbl&gt;</span></span>
-<span><span class="co">#&gt; 1 noise    0.2</span></span></code></pre></div>
+<span><span class="va">csv_files</span></span>
+<span><span class="co">#&gt; [1] "data//Gene_dosage_WS123456_12345678a_patient1.csv"</span></span>
+<span><span class="co">#&gt; [2] "data//Gene_dosage_WS123456_12345678b_patient1.csv"</span></span>
+<span><span class="co">#&gt; [3] "data//Gene_dosage_WS123456_12345678c_patient1.csv"</span></span>
+<span><span class="co">#&gt; [4] "data//Gene_dosage_WS123456_23456789_patient2.csv" </span></span>
+<span><span class="co">#&gt; [5] "data//Gene_dosage_WS123456_34567890_patient3.csv"</span></span></code></pre></div>
+</div>
+<p>Each file contains the “noise” metric for each sample replicate.</p>
+<div class="cell">
+<div id="tbl-example-xlsx-file" class="cell quarto-float quarto-figure quarto-figure-center">
+<figure class="quarto-float quarto-float-tbl"><figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-example-xlsx-file-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table 6: Contents of a single .xlsx file
+</figcaption><div aria-describedby="tbl-example-xlsx-file-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="table cell caption-top">
+<thead><tr class="header">
+<th style="text-align: left;">metric</th>
+<th style="text-align: right;">value</th>
+</tr></thead>
+<tbody><tr class="odd">
+<td style="text-align: left;">noise</td>
+<td style="text-align: right;">0.2</td>
+</tr></tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
 </div>
 <p>Similarly to before, the contents of the xlsx files can be collated together using the <code>readxl</code> package. The <code>read_excel</code> function from <code>readxl</code> does not include an option to add the filepath as a separate column, so an alternative approach is to use <code>set_names</code> and the “names_to” argument in <code>list_rbind</code> to achieve the same result.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">xlsx_data</span> <span class="op">&lt;-</span> <span class="va">xlsx_files</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">map</a></span><span class="op">(</span>\<span class="op">(</span><span class="va">xlsx_files</span><span class="op">)</span> <span class="fu">readxl</span><span class="fu">::</span><span class="fu"><a href="https://readxl.tidyverse.org/reference/read_excel.html" class="external-link">read_excel</a></span><span class="op">(</span><span class="va">xlsx_files</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu">rlang</span><span class="fu">::</span><span class="fu"><a href="https://rlang.r-lib.org/reference/set_names.html" class="external-link">set_names</a></span><span class="op">(</span><span class="va">xlsx_files</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/list_c.html" class="external-link">list_rbind</a></span><span class="op">(</span>names_to <span class="op">=</span> <span class="st">"filename"</span><span class="op">)</span> </span>
-<span></span>
-<span><span class="va">xlsx_data</span></span>
-<span><span class="co">#&gt; # A tibble: 5 × 3</span></span>
-<span><span class="co">#&gt;   filename                                               metric value</span></span>
-<span><span class="co">#&gt;   &lt;chr&gt;                                                  &lt;chr&gt;  &lt;dbl&gt;</span></span>
-<span><span class="co">#&gt; 1 data//Quality-control-patient1-12345678a-WS123456.xlsx noise   0.2 </span></span>
-<span><span class="co">#&gt; 2 data//Quality-control-patient1-12345678b-WS123456.xlsx noise   0.3 </span></span>
-<span><span class="co">#&gt; 3 data//Quality-control-patient1-12345678c-WS123456.xlsx noise   0.25</span></span>
-<span><span class="co">#&gt; 4 data//Quality-control-patient2-23456789-WS123456.xlsx  noise   0.3 </span></span>
-<span><span class="co">#&gt; 5 data//Quality-control-patient3-34567890-WS123456.xlsx  noise   0.15</span></span></code></pre></div>
+<span>  <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/list_c.html" class="external-link">list_rbind</a></span><span class="op">(</span>names_to <span class="op">=</span> <span class="st">"filepath"</span><span class="op">)</span> </span></code></pre></div>
 </div>
-<p>Then, just as with the csv files, the identifiers can be extracted using <code>mutate_ids</code>, which still works even though the filename format has changed.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="downlit sourceCode r">
+<div id="tbl-collated-xlsx-data" class="cell quarto-float quarto-figure quarto-figure-center">
+<figure class="quarto-float quarto-float-tbl"><figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-collated-xlsx-data-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table 7: Collated quality metric data with filepaths
+</figcaption><div aria-describedby="tbl-collated-xlsx-data-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="table cell caption-top">
+<thead><tr class="header">
+<th style="text-align: left;">filepath</th>
+<th style="text-align: left;">metric</th>
+<th style="text-align: right;">value</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">data//Quality-control-patient1-12345678a-WS123456.xlsx</td>
+<td style="text-align: left;">noise</td>
+<td style="text-align: right;">0.20</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">data//Quality-control-patient1-12345678b-WS123456.xlsx</td>
+<td style="text-align: left;">noise</td>
+<td style="text-align: right;">0.30</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">data//Quality-control-patient1-12345678c-WS123456.xlsx</td>
+<td style="text-align: left;">noise</td>
+<td style="text-align: right;">0.25</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">data//Quality-control-patient2-23456789-WS123456.xlsx</td>
+<td style="text-align: left;">noise</td>
+<td style="text-align: right;">0.30</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">data//Quality-control-patient3-34567890-WS123456.xlsx</td>
+<td style="text-align: left;">noise</td>
+<td style="text-align: right;">0.15</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<p>Then, just as with the csv files, the identifiers can be extracted using <code>mutate_ids</code>. Importantly, this process still works even though the filename format has changed.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">xlsx_data_with_names</span> <span class="op">&lt;-</span> <span class="va">xlsx_data</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu">idtools</span><span class="fu">::</span><span class="fu"><a href="../reference/mutate_ids.html">mutate_ids</a></span><span class="op">(</span>id_col <span class="op">=</span> <span class="va">filename</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">xlsx_data_with_names</span></span>
-<span><span class="co">#&gt; # A tibble: 5 × 8</span></span>
-<span><span class="co">#&gt;   filename                      metric value labno suffix worksheet labno_suffix</span></span>
-<span><span class="co">#&gt;   &lt;chr&gt;                         &lt;chr&gt;  &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;     &lt;chr&gt;       </span></span>
-<span><span class="co">#&gt; 1 data//Quality-control-patien… noise   0.2  1234… "a"    WS123456  12345678a   </span></span>
-<span><span class="co">#&gt; 2 data//Quality-control-patien… noise   0.3  1234… "b"    WS123456  12345678b   </span></span>
-<span><span class="co">#&gt; 3 data//Quality-control-patien… noise   0.25 1234… "c"    WS123456  12345678c   </span></span>
-<span><span class="co">#&gt; 4 data//Quality-control-patien… noise   0.3  2345… ""     WS123456  23456789    </span></span>
-<span><span class="co">#&gt; 5 data//Quality-control-patien… noise   0.15 3456… ""     WS123456  34567890    </span></span>
-<span><span class="co">#&gt; # ℹ 1 more variable: labno_suffix_worksheet &lt;chr&gt;</span></span></code></pre></div>
+<span>  <span class="fu">idtools</span><span class="fu">::</span><span class="fu"><a href="../reference/mutate_ids.html">mutate_ids</a></span><span class="op">(</span>id_col <span class="op">=</span> <span class="va">filepath</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="cell">
+<div id="tbl-xlsx-data-with-names" class="cell quarto-float quarto-figure quarto-figure-center">
+<figure class="quarto-float quarto-float-tbl"><figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-xlsx-data-with-names-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table 8: Collated quality metric data with separate identifiers
+</figcaption><div aria-describedby="tbl-xlsx-data-with-names-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="table cell caption-top">
+<colgroup>
+<col style="width: 42%">
+<col style="width: 6%">
+<col style="width: 5%">
+<col style="width: 7%">
+<col style="width: 10%">
+<col style="width: 17%">
+<col style="width: 5%">
+<col style="width: 4%">
+</colgroup>
+<thead><tr class="header">
+<th style="text-align: left;">filepath</th>
+<th style="text-align: left;">labno</th>
+<th style="text-align: left;">suffix</th>
+<th style="text-align: left;">worksheet</th>
+<th style="text-align: left;">labno_suffix</th>
+<th style="text-align: left;">labno_suffix_worksheet</th>
+<th style="text-align: left;">metric</th>
+<th style="text-align: right;">value</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">data//Quality-control-patient1-12345678a-WS123456.xlsx</td>
+<td style="text-align: left;">12345678</td>
+<td style="text-align: left;">a</td>
+<td style="text-align: left;">WS123456</td>
+<td style="text-align: left;">12345678a</td>
+<td style="text-align: left;">12345678a_WS123456</td>
+<td style="text-align: left;">noise</td>
+<td style="text-align: right;">0.20</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">data//Quality-control-patient1-12345678b-WS123456.xlsx</td>
+<td style="text-align: left;">12345678</td>
+<td style="text-align: left;">b</td>
+<td style="text-align: left;">WS123456</td>
+<td style="text-align: left;">12345678b</td>
+<td style="text-align: left;">12345678b_WS123456</td>
+<td style="text-align: left;">noise</td>
+<td style="text-align: right;">0.30</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">data//Quality-control-patient1-12345678c-WS123456.xlsx</td>
+<td style="text-align: left;">12345678</td>
+<td style="text-align: left;">c</td>
+<td style="text-align: left;">WS123456</td>
+<td style="text-align: left;">12345678c</td>
+<td style="text-align: left;">12345678c_WS123456</td>
+<td style="text-align: left;">noise</td>
+<td style="text-align: right;">0.25</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">data//Quality-control-patient2-23456789-WS123456.xlsx</td>
+<td style="text-align: left;">23456789</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">WS123456</td>
+<td style="text-align: left;">23456789</td>
+<td style="text-align: left;">23456789_WS123456</td>
+<td style="text-align: left;">noise</td>
+<td style="text-align: right;">0.30</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">data//Quality-control-patient3-34567890-WS123456.xlsx</td>
+<td style="text-align: left;">34567890</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">WS123456</td>
+<td style="text-align: left;">34567890</td>
+<td style="text-align: left;">34567890_WS123456</td>
+<td style="text-align: left;">noise</td>
+<td style="text-align: right;">0.15</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
 </div>
 </section></section><script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
