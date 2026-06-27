@@ -55,7 +55,8 @@ mutate_ids <- function(df,
       labno_suffix = paste0(.data$labno, .data$suffix),
       labno_suffix_worksheet = paste0(.data$labno_suffix,
                                       "_",
-                                      .data$worksheet)) |>
+                                      .data$worksheet),
+      .after = {{ id_col }}) |>
     dplyr::ungroup()
 
   if(anyNA.data.frame(output)){
