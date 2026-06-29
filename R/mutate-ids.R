@@ -46,22 +46,48 @@ mutate_ids <- function(df,
     stop("input must be a dataframe")
   }
 
+  if("labno" %in%
+     colnames(df)){
+    message("Input already contains a column called labno. This will be replaced by the output of extract_labno.")
+  }
+
+  if("suffix" %in%
+     colnames(df)){
+    message("Input already contains a column called suffix. This will be replaced by the output of extract_suffix.")
+  }
+
+  if("worksheet" %in%
+     colnames(df)){
+    message("Input already contains a column called worksheet. This will be replaced by the output of extract_worksheet.")
+  }
+
   output <- df |>
     dplyr::rowwise() |>
     dplyr::mutate(
-      labno = extract_labno({{ id_col }}),
-      suffix = extract_suffix({{ id_col }}),
-      worksheet = extract_worksheet({{ id_col }}),
+      labno = {
+        value <- extract_labno({{ id_col }})
+        if(is.na(value)) message("NA returned for labno at ",
+                                 {{ id_col }})
+        value
+      },
+      suffix = {
+        value <- extract_suffix({{ id_col }})
+        if(is.na(value)) message("NA returned for suffix at ",
+                                 {{ id_col }})
+        value
+      },
+      worksheet = {
+        value <- extract_worksheet({{ id_col }})
+        if(is.na(value)) message("NA returned for worksheet at ",
+                                 {{ id_col }})
+        value
+      },
       labno_suffix = paste0(.data$labno, .data$suffix),
       labno_suffix_worksheet = paste0(.data$labno_suffix,
                                       "_",
                                       .data$worksheet),
       .after = {{ id_col }}) |>
     dplyr::ungroup()
-
-  if(anyNA.data.frame(output)){
-    warning("output contains NA values")
-  }
 
   return(output)
 

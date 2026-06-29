@@ -10,8 +10,7 @@ test_that("extract_worksheet handles lowercase ws", {
 
 test_that("error is thrown if more than 6 digits in worksheet number", {
 
-  expect_warning(extract_worksheet("WS12345678_12345678"),
-                 regexp = "NA value returned")
+  expect_true(is.na(extract_worksheet("WS12345678_12345678")))
 
 })
 

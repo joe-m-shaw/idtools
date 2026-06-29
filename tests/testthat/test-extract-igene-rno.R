@@ -7,7 +7,6 @@ test_that("extract_igene_rno works with hyphen", {
 
 test_that("extract_igene_rno returns NA when non-alphanumeric characters present",{
 
-  expect_warning(extract_igene_rno("WS123456_R26-$%£!"),
-                 regexp = "NA value returned")
+  expect_true(is.na(extract_igene_rno("WS123456_R26-$%£!")))
 
 })

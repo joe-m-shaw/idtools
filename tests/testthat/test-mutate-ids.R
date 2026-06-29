@@ -244,3 +244,43 @@ test_that("SeqOne HRD output filename is handled", {
                  dplyr::select(-filename),
                df_expected)
 })
+
+test_that("rows with missing identifiers are included in messages", {
+
+  df_with_missing_ids <- tibble::tribble(
+    ~"filename",
+    "WS123456_12345678",
+    "WS_missing_12345678",
+    "WS123456_labno_missing")
+
+  messages <- capture_messages(mutate_ids(df = df_with_missing_ids,
+                                          id_col = filename))
+
+  expect_true(any(grepl("NA returned for labno at WS123456_labno_missing",
+                        messages)))
+
+  expect_true(any(grepl("NA returned for suffix at WS123456_labno_missing",
+                        messages)))
+
+  expect_true(any(grepl("NA returned for worksheet at WS_missing_12345678",
+                        messages)))
+
+})
+
+test_that("input with worksheet already in colnames generates message", {
+
+  input <- tibble::tibble(
+    "filename" = "Annotated_WS123456_12345678a_PierreBEZUKHOV.xlsx",
+    "worksheet" = "Worksheet for analysis")
+
+  expect_message(mutate_ids(input, filename),
+                 regexp = "Input already contains a column called worksheet. This will be replaced by the output of extract_worksheet.")
+
+})
+
+test_that("string input gives error", {
+
+  expect_error(mutate_ids("12345678a_WS123456"),
+               regexp = "input must be a dataframe")
+
+})
