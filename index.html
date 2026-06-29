@@ -60,8 +60,8 @@
 </div>
 <!-- badges: start -->
 <!-- badges: end -->
-<p><code>idtools</code> is an R package for extracting sample identifiers from filenames at the North West Genomic Laboratory Hub in Manchester, United Kingdom. It is intended to be used for validation or development projects, where key information, such as the DNA lab number, worksheet number and replicate suffix, are concatenated within the filename.</p>
-<p>The name is a pun on the concept of “tidy tools” from the <a href="https://tidyverse.tidyverse.org/articles/manifesto.html" class="external-link">“Tidy Tools Manifesto”</a> by Hadley Wickham.</p>
+<p><code>idtools</code> is an R package for extracting sample identifiers from filenames at the North West Genomic Laboratory Hub in Manchester, United Kingdom. It is intended to be used for internal use only, and can be used for validation or development projects, where key information, such as the DNA lab number, worksheet number and replicate suffix, are concatenated within a filename.</p>
+<p>The name is a pun on the concept of “tidy tools” from the <a href="https://tidyverse.tidyverse.org/articles/manifesto.html" class="external-link">“Tidy Tools Manifesto”</a> by Hadley Wickham. <code>idtools</code> depends on the <code>dplyr</code> and <code>stringr</code> packages from the tidyverse</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -73,7 +73,7 @@
 <div class="section level2">
 <h2 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
 </h2>
-<p>You can use <code>idtools</code> to extract sample identifiers stored in filenames.</p>
+<p>You can use <code>idtools</code> to extract sample identifiers stored in strings and filenames.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://joe-m-shaw.github.io/idtools/">idtools</a></span><span class="op">)</span></span>
@@ -88,12 +88,83 @@
 <span></span>
 <span><span class="fu"><a href="reference/extract_suffix.html">extract_suffix</a></span><span class="op">(</span><span class="va">filename</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "a"</span></span></code></pre></div>
+<p>This is helpful if you have a dataframe of results from multiple files, with the filename in a separate column.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="va">results_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>  <span class="st">"file"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"WS123456_12345678a_results.csv"</span>, <span class="st">"WS123456_23456789_results.csv"</span><span class="op">)</span>,</span>
+<span>  <span class="st">"result"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Variant detected"</span>, <span class="st">"Variant not detected"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">results_df</span><span class="op">)</span></span></code></pre></div>
+<table class="table">
+<thead><tr>
+<th align="left">file</th>
+<th align="left">result</th>
+</tr></thead>
+<tbody>
+<tr>
+<td align="left">WS123456_12345678a_results.csv</td>
+<td align="left">Variant detected</td>
+</tr>
+<tr>
+<td align="left">WS123456_23456789_results.csv</td>
+<td align="left">Variant not detected</td>
+</tr>
+</tbody>
+</table>
+<p>You can use the <code>mutate_ids</code> function with the pipe (|&gt;) operator to quickly extract the sample identifiers.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="va">results_with_ids</span> <span class="op">&lt;-</span> <span class="va">results_df</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="reference/mutate_ids.html">mutate_ids</a></span><span class="op">(</span><span class="va">file</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">results_with_ids</span><span class="op">)</span></span></code></pre></div>
+<table style="width:100%;" class="table">
+<colgroup>
+<col width="14%">
+<col width="14%">
+<col width="14%">
+<col width="14%">
+<col width="14%">
+<col width="14%">
+<col width="14%">
+</colgroup>
+<thead><tr>
+<th align="left">file</th>
+<th align="left">labno</th>
+<th align="left">suffix</th>
+<th align="left">worksheet</th>
+<th align="left">labno_suffix</th>
+<th align="left">labno_suffix_worksheet</th>
+<th align="left">result</th>
+</tr></thead>
+<tbody>
+<tr>
+<td align="left">WS123456_12345678a_results.csv</td>
+<td align="left">12345678</td>
+<td align="left">a</td>
+<td align="left">WS123456</td>
+<td align="left">12345678a</td>
+<td align="left">12345678a_WS123456</td>
+<td align="left">Variant detected</td>
+</tr>
+<tr>
+<td align="left">WS123456_23456789_results.csv</td>
+<td align="left">23456789</td>
+<td align="left"></td>
+<td align="left">WS123456</td>
+<td align="left">23456789</td>
+<td align="left">23456789_WS123456</td>
+<td align="left">Variant not detected</td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="section level2">
 <h2 id="information-governance">Information Governance<a class="anchor" aria-label="anchor" href="#information-governance"></a>
 </h2>
 <p><strong>No patient identifiable information should be included in this repository.</strong></p>
-<p>If you spot some, please let me know.</p>
 <p>For the purpose of testing functions, I have used generic examples for worksheet (WS123456) and lab number (12345678) values.</p>
 <p>Where examples of patient names are required, I have used character names from novels by Leo Tolstoy (Anna Karenina, Pierre Bezukhov etc).</p>
 </div>
