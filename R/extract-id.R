@@ -38,8 +38,6 @@ extract_id <- function(input, pattern, group) {
                                            pattern = pattern,
                                            group = group)
 
-  if (any(is.na(output))) warning("NA value returned")
-
   return(output)
 
 }
