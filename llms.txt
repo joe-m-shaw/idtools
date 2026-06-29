@@ -10,7 +10,8 @@ concatenated within a filename.
 The name is a pun on the concept of “tidy tools” from the [“Tidy Tools
 Manifesto”](https://tidyverse.tidyverse.org/articles/manifesto.html) by
 Hadley Wickham. `idtools` depends on the `dplyr` and `stringr` packages
-from the tidyverse
+from the tidyverse, and is intended to be used with `purrr` and other
+tidyverse packages for exploratory data analysis.
 
 ## Installation
 
