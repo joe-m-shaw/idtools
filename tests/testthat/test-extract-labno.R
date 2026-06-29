@@ -41,3 +41,15 @@ test_that("the first lab number is extracted if two are present", {
   expect_equal(extract_labno("12345678_WS123456_23456789"),
                "12345678")
 })
+
+test_that("long folderpaths are handled, and first labno is selected", {
+
+  # Edge case where a folder name includes a different labno to the
+  # results file
+  test_filepath <- "folder/path/WS123456/results_for_12345678/WS234567_23456789.csv"
+
+  expect_equal(extract_labno(test_filepath), "12345678")
+
+  expect_equal(extract_labno(basename(test_filepath)), "23456789")
+
+})
