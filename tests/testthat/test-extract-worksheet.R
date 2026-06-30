@@ -20,3 +20,17 @@ test_that("worksheet without additional text is handled", {
                "WS123456")
 
 })
+
+test_that("omission of WS returns NA", {
+
+  expect_true(is.na(extract_worksheet("Result_123456_12345678_file.csv")))
+
+})
+
+test_that("inclusion of hyphen returns NA", {
+
+  expect_true(is.na(extract_worksheet("Result_WS-123456_12345678_file.csv")))
+
+})
+
+

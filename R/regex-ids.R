@@ -81,10 +81,10 @@ regex_ids <- function(){
     "igene_rno" = list(
       "regex" = stringr::regex(
         r"[
-        (
-        R\d{2}-           # R with 2 digits: R24, R25 etc
-        [[:alnum:]]{4}    # 4 alphanumeric characters
-        )
+        (R\d{2}-             # R with 2 digits: R24, R25 etc
+        [[:alnum:]]{4})      # 4 alphanumeric characters
+        (?![[:alnum:]])      # The group must at most (?) not (!) be followed
+                             # by another alphanumeric character
         ]",
         comments = TRUE
       ),
