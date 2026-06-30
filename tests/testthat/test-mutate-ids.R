@@ -284,3 +284,14 @@ test_that("string input gives error", {
                regexp = "input must be a dataframe")
 
 })
+
+test_that("informative error is thrown when id_col not supplied", {
+
+  input <- tibble::tibble(
+    "filename" = "Annotated_WS123456_12345678a_PierreBEZUKHOV.xlsx"
+  )
+
+  expect_error(mutate_ids(input),
+               "id_col must be supplied")
+
+})

@@ -15,7 +15,8 @@
 #'
 #' This function is particularly effective when combined with the pipe (|>)
 #' operator as it takes a dataframe as its input.
-#' Extra detail of using `mutate_ids` is provided in the vignette.
+#' Extra detail of using `mutate_ids` is provided in the
+#' "Data analysis with idtools" vignette.
 #'
 #' @param df The dataframe to add identifiers to
 #' @param id_col The column in the dataframe which includes the filename.
@@ -44,6 +45,10 @@ mutate_ids <- function(df,
 
   if(!is.data.frame(df)){
     stop("input must be a dataframe")
+  }
+
+  if(missing(id_col)){
+    stop("id_col must be supplied")
   }
 
   if("labno" %in%
