@@ -26,7 +26,7 @@ You can install the development version of idtools from
 
 ``` r
 # install.packages("pak")
-pak::pak("joe-m-shaw/labtools")
+pak::pak("joe-m-shaw/idtools")
 ```
 
 ## Example
