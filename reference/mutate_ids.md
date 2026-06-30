@@ -14,7 +14,8 @@ when filtering or grouping data from multiple experiments.
 
 This function is particularly effective when combined with the pipe
 (\|\>) operator as it takes a dataframe as its input. Extra detail of
-using `mutate_ids` is provided in the vignette.
+using `mutate_ids` is provided in the "Data analysis with idtools"
+vignette.
 
 ## Usage
 
