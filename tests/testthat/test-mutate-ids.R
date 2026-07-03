@@ -269,12 +269,26 @@ test_that("rows with missing identifiers are included in messages", {
 
 test_that("input with worksheet already in colnames generates message", {
 
-  input <- tibble::tibble(
+  input_worksheet <- tibble::tibble(
     "filename" = "Annotated_WS123456_12345678a_PierreBEZUKHOV.xlsx",
     "worksheet" = "Worksheet for analysis")
 
-  expect_message(mutate_ids(input, filename),
+  expect_message(mutate_ids(input_worksheet, filename),
                  regexp = "Input already contains a column called worksheet. This will be replaced by the output of extract_worksheet.")
+
+  input_labno <- tibble::tibble(
+    "filename" = "Annotated_WS123456_12345678a_PierreBEZUKHOV.xlsx",
+    "labno" = "12345678")
+
+  expect_message(mutate_ids(input_labno, filename),
+                 regexp = "Input already contains a column called labno. This will be replaced by the output of extract_labno.")
+
+  input_suffix <- tibble::tibble(
+    "filename" = "Annotated_WS123456_12345678a_PierreBEZUKHOV.xlsx",
+    "suffix" = "a")
+
+  expect_message(mutate_ids(input_suffix, filename),
+                 regexp = "Input already contains a column called suffix. This will be replaced by the output of extract_suffix.")
 
 })
 
