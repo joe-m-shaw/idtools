@@ -45,6 +45,19 @@ same sample.
 \strong{igene_rno}: the R (referral) number from the iGene database has the format
 of R followed by the two-digit year number, a hyphen, and then four
 alpha-numeric charactes. Example: R26-AB12.
+
+\strong{igene_sno}: the S (sample) number from the iGene database has the same
+format as the R number (above) but with an S instead of an R a the
+beginning.
+
+\strong{combined_plate}: the combined plate number from the DNA Database which is
+"CP" followed by 5 digits.
+
+\strong{wgs_patient_no}: the whole genome sequencing (WGS) pathway in the Genomic
+Medicine Service uses a patient identifier which is "p" followed by 11 digits.
+
+\strong{wgs_referral_no}: the referral ("r") equivalent of the WGS patient number,
+structured as "r" followed by 11 digits.
 }
 \examples{
 

@@ -37,6 +37,19 @@
 #' of R followed by the two-digit year number, a hyphen, and then four
 #' alpha-numeric charactes. Example: R26-AB12.
 #'
+#' **igene_sno**: the S (sample) number from the iGene database has the same
+#' format as the R number (above) but with an S instead of an R a the
+#' beginning.
+#'
+#' **combined_plate**: the combined plate number from the DNA Database which is
+#' "CP" followed by 5 digits.
+#'
+#' **wgs_patient_no**: the whole genome sequencing (WGS) pathway in the Genomic
+#' Medicine Service uses a patient identifier which is "p" followed by 11 digits.
+#'
+#' **wgs_referral_no**: the referral ("r") equivalent of the WGS patient number,
+#' structured as "r" followed by 11 digits.
+#'
 #' @returns A named list of regular expressions for different identifiers
 #' @export
 #'
@@ -89,7 +102,54 @@ regex_ids <- function(){
         comments = TRUE
       ),
       "igene_rno_group" = 1
-    )
+    ),
+
+    # iGene S number
+    "igene_sno" = list(
+      "regex" = stringr::regex(
+        r"[
+        (S\d{2}-             # S with 2 digits
+        [[:alnum:]]{4})      # 4 alphanumeric characters
+        (?![[:alnum:]])      # The group must at most (?) not (!) be followed
+                             # by another alphanumeric character
+        ]",
+        comments = TRUE
+      ),
+      "igene_sno_group" = 1
+    ),
+
+    # Combined plate number
+    "combined_plate" = list(
+      "regex" = stringr::regex(
+        r"[
+        (CP\d{5})    # CP followed by 5 digits
+        (\D+|$)       # Either a non-digit character or end of the string
+        ]",
+        comments = TRUE
+    ),
+    "combined_plate_group" = 1
+    ),
+
+    # WGS patient number
+    "wgs_patient_no" = list(
+      "regex" = stringr::regex(
+        r"[
+        (p\d{11})    # p followed by 11 digits
+        (\D+|$)      # Either a non-digit character or end of the string
+        ]",
+        comments = TRUE
+      ),
+      "wgs_patient_no_group" = 1),
+
+    # WGS referral number
+    "wgs_referral_no" = list(
+      "regex" = stringr::regex(
+        r"[
+        (r\d{11})   # r followed by 11 digits
+        (\D+|$)      # Either a non-digit character or end of the string
+        ]",
+        comments = TRUE),
+      "wgs_referral_no_group" = 1)
   )
 
   return(output_list)
