@@ -56,12 +56,22 @@ within the laboratory directories.</p>
     </div>
     <div class="section level2">
     <h2 id="note">Note<a class="anchor" aria-label="anchor" href="#note"></a></h2>
-    <p>When an Excel file is open, a temporary file with "~$" at the start of
+    <p>Open Excel files:</p>
+<p>When an Excel file is open, a temporary file with "~$" at the start of
 the filename will be created. Selecting these temporary files can lead
 to issues when trying to read files with R. The "^" at the beginning of each
 regex should mean that only non-temporary files are selected, which is
 useful when combining <code>regex_filenames</code> with <code>list.files</code> in directories
 where Excel files may already be open.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="filenames">Filenames<a class="anchor" aria-label="anchor" href="#filenames"></a></h2>
+
+
+
+<p><code>regex_filenames</code> currently holds regex for the "Annotated" and
+"unannotated" Excel outputs from the CLC pipelines for the PanSolid and
+PanHaem next generation sequencing workflows.</p>
     </div>
 
     <div class="section level2">

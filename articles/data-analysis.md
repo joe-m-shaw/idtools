@@ -50,7 +50,7 @@ In order to analyse the data, two steps need to be completed:
 2.  The sample identifiers from each filename should be added to the
     dataframe as separate columns.
 
-### 1. Collating the results with `purrr` and `readr`
+## Collating the results with `purrr` and `readr`
 
 Collating the file contents can be achieved by applying the `read_csv`
 function from `readr` to all the files, using the `map` function from
@@ -98,7 +98,7 @@ This creates a dataframe containing the results from all the csv files.
 
 Table 2: Collated gene dosage data with filepaths
 
-### 2. Adding sample identifiers with `idtools`
+## Adding sample identifiers with `idtools`
 
 The `mutate_ids` function from `idtools` can then be applied to the new
 “filepath” column of the collated data. This function extracts the DNA
@@ -141,7 +141,7 @@ csv_data_with_names <- csv_data |>
 
 Table 3: Collated gene dosage data with separated identifiers
 
-### Analysing the collated data
+## Analysing the collated data
 
 Now that the data is all together in a single dataframe, including the
 sample identifiers, it can be more easily analysed.
@@ -195,11 +195,28 @@ knitr::kable(csv_data_with_names |>
 Table 5: Results for sample 12345678
 
 And the `ggplot2` package from the tidyverse can be used to visualise
-all the results.
+all the results. This shows the *EGFR* amplification clearly present in
+sample 12345678, including some variation between the 3 replicates for
+this sample, and the codeletion of *CDKN2A* and *CDKN2B* for sample
+23456789.
+
+``` r
+
+ggplot(csv_data_with_names, aes(x = gene, y = log2r)) +
+  geom_jitter(shape = 21, size = 3,
+              alpha = 0.6, width = 0.1, aes(fill = suffix)) +
+  theme_bw()+
+  theme(axis.text.x = element_text(angle = 90)) +
+  facet_wrap(~labno) +
+  labs(x = "Gene", y = "Log2 ratio",
+       title = "Collated csv file results",
+       subtitle = "Facetted by lab number",
+       fill = "Suffix")
+```
 
 ![](data-analysis_files/figure-html/plot-1.png)
 
-### Reading different file types
+## Reading different file types
 
 The same data folder also contains 5 Excel files of quality control
 information. However, the filename format is different: the identifiers
@@ -278,3 +295,11 @@ xlsx_data_with_names <- xlsx_data |>
 | data//Quality-control-patient3-34567890-WS123456.xlsx | 34567890 |  | WS123456 | 34567890 | 34567890_WS123456 | noise | 0.15 |
 
 Table 8: Collated quality metric data with separate identifiers
+
+## Summary
+
+`idtools` can be combined with tidyverse packages like `purrr` and
+`readr` for streamlining data analysis in development projects. This
+vignette has focussed on the labno, suffix and worksheet identifiers,
+but a full list of the supported identifiers can be found in the
+documentation for the `regex_ids` function.

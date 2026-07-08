@@ -68,7 +68,7 @@
 
 
     <p><code>idtools</code> is designed to be used at the North West Genomic Laboratory Hub for projects involving data analysis of multiple results files. This vignette goes through an example of a common scenario where <code>idtools</code> can help.</p>
-<section class="section level2"><h2 id="lots-of-files-with-long-filenames">Lots of files with long filenames<a class="anchor" aria-label="anchor" href="#lots-of-files-with-long-filenames"></a>
+<section class="level2"><h2 id="lots-of-files-with-long-filenames">Lots of files with long filenames<a class="anchor" aria-label="anchor" href="#lots-of-files-with-long-filenames"></a>
 </h2>
 <p>A common scenario faced in genetic test development is where there are multiple files of results, and the identifiers for each sample are included in long filenames.</p>
 <p>Here is an example with 5 .csv files which contain gene dosage results for fictional patients. All these files are saved in a folder called “data”.</p>
@@ -129,10 +129,9 @@ Table 1: Contents of a single .csv file
 <ol type="1">
 <li><p>The results from each individual file should be collated together in one dataframe</p></li>
 <li><p>The sample identifiers from each filename should be added to the dataframe as separate columns.</p></li>
-</ol>
-<section class="level2"><h3 id="collating-the-results-with-purrr-and-readr">1. Collating the results with <code>purrr</code> and <code>readr</code>
+</ol></section><section class="level2"><h2 id="collating-the-results-with-purrr-and-readr">Collating the results with <code>purrr</code> and <code>readr</code>
 <a class="anchor" aria-label="anchor" href="#collating-the-results-with-purrr-and-readr"></a>
-</h3>
+</h2>
 <p>Collating the file contents can be achieved by applying the <code>read_csv</code> function from <code>readr</code> to all the files, using the <code>map</code> function from <code>purrr</code>. Specifying <code>id="filepath"</code> in the call to <code>read_csv</code> adds the full filepath as a new column to the contents of each file.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="downlit sourceCode r">
@@ -288,9 +287,9 @@ Table 2: Collated gene dosage data with filepaths
 </figure>
 </div>
 </div>
-</section><section class="level2"><h3 id="adding-sample-identifiers-with-idtools">2. Adding sample identifiers with <code>idtools</code>
+</section><section class="level2"><h2 id="adding-sample-identifiers-with-idtools">Adding sample identifiers with <code>idtools</code>
 <a class="anchor" aria-label="anchor" href="#adding-sample-identifiers-with-idtools"></a>
-</h3>
+</h2>
 <p>The <code>mutate_ids</code> function from <code>idtools</code> can then be applied to the new “filepath” column of the collated data. This function extracts the DNA lab number (labno), replicate suffix and worksheet number from the filepath, and adds each identifier as a new column.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="downlit sourceCode r">
@@ -582,8 +581,8 @@ Table 3: Collated gene dosage data with separated identifiers
 </figure>
 </div>
 </div>
-</section><section class="level2"><h3 id="analysing-the-collated-data">Analysing the collated data<a class="anchor" aria-label="anchor" href="#analysing-the-collated-data"></a>
-</h3>
+</section><section class="level2"><h2 id="analysing-the-collated-data">Analysing the collated data<a class="anchor" aria-label="anchor" href="#analysing-the-collated-data"></a>
+</h2>
 <p>Now that the data is all together in a single dataframe, including the sample identifiers, it can be more easily analysed.</p>
 <p>For example, the data can be quickly filtered to return only the results for the <em>EGFR</em> gene.</p>
 <div class="cell">
@@ -863,8 +862,19 @@ Table 5: Results for sample 12345678
 </figure>
 </div>
 </div>
-<p>And the <code>ggplot2</code> package from the tidyverse can be used to visualise all the results.</p>
+<p>And the <code>ggplot2</code> package from the tidyverse can be used to visualise all the results. This shows the <em>EGFR</em> amplification clearly present in sample 12345678, including some variation between the 3 replicates for this sample, and the codeletion of <em>CDKN2A</em> and <em>CDKN2B</em> for sample 23456789.</p>
 <div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span><span class="va">csv_data_with_names</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">gene</span>, y <span class="op">=</span> <span class="va">log2r</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_jitter</span><span class="op">(</span>shape <span class="op">=</span> <span class="fl">21</span>, size <span class="op">=</span> <span class="fl">3</span>,</span>
+<span>              alpha <span class="op">=</span> <span class="fl">0.6</span>, width <span class="op">=</span> <span class="fl">0.1</span>, <span class="fu">aes</span><span class="op">(</span>fill <span class="op">=</span> <span class="va">suffix</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">theme_bw</span><span class="op">(</span><span class="op">)</span><span class="op">+</span></span>
+<span>  <span class="fu">theme</span><span class="op">(</span>axis.text.x <span class="op">=</span> <span class="fu">element_text</span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">90</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">facet_wrap</span><span class="op">(</span><span class="op">~</span><span class="va">labno</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Gene"</span>, y <span class="op">=</span> <span class="st">"Log2 ratio"</span>,</span>
+<span>       title <span class="op">=</span> <span class="st">"Collated csv file results"</span>,</span>
+<span>       subtitle <span class="op">=</span> <span class="st">"Facetted by lab number"</span>,</span>
+<span>       fill <span class="op">=</span> <span class="st">"Suffix"</span><span class="op">)</span></span></code></pre></div>
 <div class="cell-output-display">
 <div>
 <figure><p><img src="data-analysis_files/figure-html/plot-1.png" width="672"></p>
@@ -872,11 +882,11 @@ Table 5: Results for sample 12345678
 </div>
 </div>
 </div>
-</section><section class="level2"><h3 id="reading-different-file-types">Reading different file types<a class="anchor" aria-label="anchor" href="#reading-different-file-types"></a>
-</h3>
+</section><section class="level2"><h2 id="reading-different-file-types">Reading different file types<a class="anchor" aria-label="anchor" href="#reading-different-file-types"></a>
+</h2>
 <p>The same data folder also contains 5 Excel files of quality control information. However, the filename format is different: the identifiers are in a different order to the csv files, and hyphens are used instead of underscores.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">xlsx_files</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.files.html" class="external-link">list.files</a></span><span class="op">(</span>path <span class="op">=</span> <span class="st">"data/"</span>,</span>
 <span>           pattern <span class="op">=</span> <span class="st">".*.xlsx"</span>,</span>
 <span>           full.names <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
@@ -919,7 +929,7 @@ Table 6: Contents of a single .xlsx file
 </div>
 <p>Similarly to before, the contents of the xlsx files can be collated together using the <code>readxl</code> package. The <code>read_excel</code> function from <code>readxl</code> does not include an option to add the filepath as a separate column, so an alternative approach is to use <code>set_names</code> and the “names_to” argument in <code>list_rbind</code> to achieve the same result.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">xlsx_data</span> <span class="op">&lt;-</span> <span class="va">xlsx_files</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">map</a></span><span class="op">(</span>\<span class="op">(</span><span class="va">xlsx_files</span><span class="op">)</span> <span class="fu">readxl</span><span class="fu">::</span><span class="fu"><a href="https://readxl.tidyverse.org/reference/read_excel.html" class="external-link">read_excel</a></span><span class="op">(</span><span class="va">xlsx_files</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu">rlang</span><span class="fu">::</span><span class="fu"><a href="https://rlang.r-lib.org/reference/set_names.html" class="external-link">set_names</a></span><span class="op">(</span><span class="va">xlsx_files</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
@@ -972,7 +982,7 @@ Table 7: Collated quality metric data with filepaths
 </div>
 <p>Then, just as with the csv files, the identifiers can be extracted using <code>mutate_ids</code>. Importantly, this process still works even though the filename format has changed.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">xlsx_data_with_names</span> <span class="op">&lt;-</span> <span class="va">xlsx_data</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu">idtools</span><span class="fu">::</span><span class="fu"><a href="../reference/mutate_ids.html">mutate_ids</a></span><span class="op">(</span>id_col <span class="op">=</span> <span class="va">filepath</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -1061,7 +1071,10 @@ Table 8: Collated quality metric data with separate identifiers
 </figure>
 </div>
 </div>
-</section></section><script id="quarto-html-after-body" type="application/javascript">
+</section><section class="level2"><h2 id="summary">Summary<a class="anchor" aria-label="anchor" href="#summary"></a>
+</h2>
+<p><code>idtools</code> can be combined with tidyverse packages like <code>purrr</code> and <code>readr</code> for streamlining data analysis in development projects. This vignette has focussed on the labno, suffix and worksheet identifiers, but a full list of the supported identifiers can be found in the documentation for the <code>regex_ids</code> function.</p>
+</section><script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
