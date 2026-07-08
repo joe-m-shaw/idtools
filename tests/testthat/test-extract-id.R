@@ -90,3 +90,12 @@ test_that("errors are thrown if group is missing or not number", {
 
 })
 
+test_that("error is thrown if pattern supplied in wrong format", {
+
+  expect_error(extract_id(input = "WS123456_12345678",
+                          pattern = as.Date("2026-01-01"),
+                          group = 1),
+               regexp = "pattern must be a character string or stringr::regex\\(\\) object")
+
+})
+
