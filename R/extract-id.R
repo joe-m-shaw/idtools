@@ -30,9 +30,24 @@
 #'
 extract_id <- function(input, pattern, group) {
 
+  # Check input
   if (any(!is.character(input))) stop("input must be a string")
 
-  if (any(input == "")) stop("input must not be empty")
+  if (any(is.na(input))) stop("input must not contain NA values")
+
+  if (any(trimws(input) == "")) stop("input must not be empty or contain only whitespace")
+
+  # Check pattern
+  if (missing(pattern) || is.null(pattern)) stop("pattern must be supplied")
+
+  if (!is.character(pattern) && !inherits(pattern, "stringr_pattern")) {
+    stop("pattern must be a character string or stringr::regex() object")
+  }
+
+  # Check group
+  if (missing(group) || !is.numeric(group)) {
+    stop("group must be a number")
+  }
 
   output <- stringr::str_extract(string = input,
                                            pattern = pattern,
