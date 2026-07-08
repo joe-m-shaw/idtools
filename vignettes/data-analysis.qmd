@@ -25,7 +25,7 @@ projects involving data analysis of multiple results files.
 This vignette goes through an example of a common scenario where `idtools` can 
 help.
 
-# Lots of files with long filenames
+## Lots of files with long filenames
 
 A common scenario faced in genetic test development is where there are multiple files
 of results, and the identifiers for each sample are included in long filenames.
@@ -67,7 +67,7 @@ dataframe
 2. The sample identifiers from each filename should be added to the 
 dataframe as separate columns.
 
-## 1. Collating the results with `purrr` and `readr`
+## Collating the results with `purrr` and `readr`
 
 Collating the file contents can be achieved
 by applying the `read_csv` function from `readr` to all the files, using
@@ -98,7 +98,7 @@ knitr::kable(csv_data)
 
 ```
 
-## 2. Adding sample identifiers with `idtools`
+## Adding sample identifiers with `idtools`
 
 The `mutate_ids` function from `idtools` can then be applied to the new 
 "filepath" column of the collated data.
@@ -155,10 +155,13 @@ knitr::kable(csv_data_with_names |>
 ```
 
 And the `ggplot2` package from the tidyverse can be used to visualise all the
-results.
+results. 
+This shows the *EGFR* amplification clearly present in sample 12345678, including
+some variation between the 3 replicates for this sample, and the 
+codeletion of *CDKN2A* and *CDKN2B* for sample 23456789.
 
 ```{r}
-#| echo: FALSE
+#| include: TRUE
 #| label: plot
 
 ggplot(csv_data_with_names, aes(x = gene, y = log2r)) +
@@ -255,4 +258,12 @@ xlsx_data_with_names <- xlsx_data |>
 knitr::kable(xlsx_data_with_names)
 
 ```
+
+## Summary
+
+`idtools` can be combined with tidyverse packages like `purrr` and `readr` for 
+streamlining data analysis in development projects.
+This vignette has focussed on the labno, suffix and worksheet identifiers, but a
+full list of the supported identifiers can be found in the documentation
+for the `regex_ids` function.
 
