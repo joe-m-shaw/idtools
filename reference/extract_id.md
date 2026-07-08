@@ -46,5 +46,5 @@ try(extract_id("",
              pattern = regex_ids()$labno_suffix$regex,
              group = regex_ids()$labno_suffix$labno_group))
 #> Error in extract_id("", pattern = regex_ids()$labno_suffix$regex, group = regex_ids()$labno_suffix$labno_group) : 
-#>   input must not be empty
+#>   input must not be empty or contain only whitespace
 ```
