@@ -49,6 +49,20 @@ variability between different replicates of the same sample.
 format of R followed by the two-digit year number, a hyphen, and then
 four alpha-numeric charactes. Example: R26-AB12.
 
+**igene_sno**: the S (sample) number from the iGene database has the
+same format as the R number (above) but with an S instead of an R a the
+beginning.
+
+**combined_plate**: the combined plate number from the DNA Database
+which is "CP" followed by 5 digits.
+
+**wgs_patient_no**: the whole genome sequencing (WGS) pathway in the
+Genomic Medicine Service uses a patient identifier which is "p" followed
+by 11 digits.
+
+**wgs_referral_no**: the referral ("r") equivalent of the WGS patient
+number, structured as "r" followed by 11 digits.
+
 ## Examples
 
 ``` r
