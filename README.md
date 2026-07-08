@@ -7,7 +7,6 @@
 
 [![Codecov test
 coverage](https://codecov.io/gh/joe-m-shaw/idtools/graph/badge.svg)](https://app.codecov.io/gh/joe-m-shaw/idtools)
-[![R-CMD-check](https://github.com/joe-m-shaw/idtools/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/joe-m-shaw/idtools/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 `idtools` is an R package for extracting sample identifiers from

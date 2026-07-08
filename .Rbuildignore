@@ -11,3 +11,5 @@
 ^vignettes/\.quarto$
 ^vignettes/*_files$
 ^codecov\.yml$
+^doc$
+^Meta$
