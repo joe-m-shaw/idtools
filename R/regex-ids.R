@@ -40,13 +40,22 @@
 #'
 #' @section iGene identifiers:
 #'
-#' **igene_rno**: the R (referral) number from the iGene database has the format
-#' of R followed by the two-digit year number, a hyphen, and then four
-#' alpha-numeric charactes. Example: R26-AB12.
+#' iGene identifiers have a consistent format of a letter signifying the
+#' identifier type (R, S, D or T), followed by the two-digit year number,
+#' a hyphen, and then four alpha-numeric characters. Example: R26-AB12.
 #'
-#' **igene_sno**: the S (sample) number from the iGene database has the same
-#' format as the R number (above) but with an S instead of an R a the
-#' beginning.
+#' **igene_rno**: the R (referral) number. One referral may have more than
+#' one sample associated with it.
+#'
+#' **igene_sno**: the S (sample) number. One sample may have more than
+#' one DNA extraction derived from it.
+#'
+#' **igene_dno**: the D (derivative) number signifies the
+#' extraction-specific identifier for a sample. One derivative may have more than
+#' one test associated with it.
+#'
+#' **igene_tno**: a T (test) number is given to a specific instance of a test
+#' performed on a derivate sample.
 #'
 #' @section Whole genome sequencing identifiers:
 #'
@@ -71,6 +80,8 @@ regex_ids <- function(){
 
   output_list <- list(
 
+    ## DNA Database identifiers
+
     # Worksheet
     "worksheet" = list(
       "regex" = stringr::regex(
@@ -81,6 +92,18 @@ regex_ids <- function(){
         ]",
         comments = TRUE),
       "worksheet_group" = 2),
+
+    # Combined plate number
+    "combined_plate" = list(
+      "regex" = stringr::regex(
+        r"[
+        (CP\d{5}|cp\d{5})    # CP or cp followed by 5 digits
+        (\D+|$)              # Either a non-digit character or end of the string
+        ]",
+        comments = TRUE
+      ),
+      "combined_plate_group" = 1
+    ),
 
     # Lab number and suffix
     "labno_suffix" = list(
@@ -95,6 +118,8 @@ regex_ids <- function(){
         comments = TRUE),
       "labno_group" = 2,
       "suffix_group" = 3),
+
+    # iGene identifiers
 
     # iGene R number
     "igene_rno" = list(
@@ -124,17 +149,35 @@ regex_ids <- function(){
       "igene_sno_group" = 1
     ),
 
-    # Combined plate number
-    "combined_plate" = list(
+    # iGene D number
+    "igene_dno" = list(
       "regex" = stringr::regex(
         r"[
-        (CP\d{5}|cp\d{5})    # CP or cp followed by 5 digits
-        (\D+|$)              # Either a non-digit character or end of the string
+        (D\d{2}-             # D with 2 digits
+        [[:alnum:]]{4})      # 4 alphanumeric characters
+        (?![[:alnum:]])      # The group must at most (?) not (!) be followed
+                             # by another alphanumeric character
         ]",
         comments = TRUE
+      ),
+      "igene_dno_group" = 1
     ),
-    "combined_plate_group" = 1
+
+    # iGene T number
+    "igene_tno" = list(
+      "regex" = stringr::regex(
+        r"[
+        (T\d{2}-             # T with 2 digits
+        [[:alnum:]]{4})      # 4 alphanumeric characters
+        (?![[:alnum:]])      # The group must at most (?) not (!) be followed
+                             # by another alphanumeric character
+        ]",
+        comments = TRUE
+      ),
+      "igene_tno_group" = 1
     ),
+
+    ## Whole genome sequencing identifiers
 
     # WGS patient number
     "wgs_patient_no" = list(

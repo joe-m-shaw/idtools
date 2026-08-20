@@ -2,8 +2,10 @@
 
 export(extract_combined_plate)
 export(extract_id)
+export(extract_igene_dno)
 export(extract_igene_rno)
 export(extract_igene_sno)
+export(extract_igene_tno)
 export(extract_labno)
 export(extract_suffix)
 export(extract_wgs_patient_no)

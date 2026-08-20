@@ -52,13 +52,22 @@ same sample.
 \section{iGene identifiers}{
 
 
-\strong{igene_rno}: the R (referral) number from the iGene database has the format
-of R followed by the two-digit year number, a hyphen, and then four
-alpha-numeric charactes. Example: R26-AB12.
+iGene identifiers have a consistent format of a letter signifying the
+identifier type (R, S, D or T), followed by the two-digit year number,
+a hyphen, and then four alpha-numeric characters. Example: R26-AB12.
 
-\strong{igene_sno}: the S (sample) number from the iGene database has the same
-format as the R number (above) but with an S instead of an R a the
-beginning.
+\strong{igene_rno}: the R (referral) number. One referral may have more than
+one sample associated with it.
+
+\strong{igene_sno}: the S (sample) number. One sample may have more than
+one DNA extraction derived from it.
+
+\strong{igene_dno}: the D (derivative) number signifies the
+extraction-specific identifier for a sample. One derivative may have more than
+one test associated with it.
+
+\strong{igene_tno}: a T (test) number is given to a specific instance of a test
+performed on a derivate sample.
 }
 
 \section{Whole genome sequencing identifiers}{
