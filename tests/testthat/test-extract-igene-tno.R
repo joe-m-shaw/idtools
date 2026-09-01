@@ -4,3 +4,12 @@ test_that("extract_igene_tno works", {
                "T26-AB12")
 
 })
+
+test_that("dno is not mistaken for tno", {
+
+  expect_true(is.na(extract_igene_tno("D26-AB12")))
+
+})
+
+
+
