@@ -53,7 +53,9 @@ same sample.
 
 
 iGene identifiers have a consistent format of a letter signifying the
-identifier type (R, S, D or T), followed by the two-digit year number,
+identifier type (R, S, D or T), followed by a consistent core identifier format.
+
+\strong{igene_core}: the core iGene regex consists of the two-digit year number,
 a hyphen, and then four alpha-numeric characters. Example: R26-AB12.
 
 \strong{igene_rno}: the R (referral) number. One referral may have more than

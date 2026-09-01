@@ -99,3 +99,12 @@ test_that("error is thrown if pattern supplied in wrong format", {
 
 })
 
+test_that("core iGene regex works when combined with fictional new identifier", {
+
+  expect_equal(extract_id(input = "A new iGene Z identifier has been introduced. Example: Z25-12AB",
+             pattern = paste0("(Z",
+                              regex_ids()$igene_core$regex),
+             group = 1),
+             "Z25-12AB")
+
+})

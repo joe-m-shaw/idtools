@@ -41,7 +41,9 @@
 #' @section iGene identifiers:
 #'
 #' iGene identifiers have a consistent format of a letter signifying the
-#' identifier type (R, S, D or T), followed by the two-digit year number,
+#' identifier type (R, S, D or T), followed by a consistent core identifier format.
+#'
+#' **igene_core**: the core iGene regex consists of the two-digit year number,
 #' a hyphen, and then four alpha-numeric characters. Example: R26-AB12.
 #'
 #' **igene_rno**: the R (referral) number. One referral may have more than
@@ -77,6 +79,12 @@
 #'                       group = regex_ids()$labno_suffix$labno_group)
 #'
 regex_ids <- function(){
+
+  regex_igene_core <- paste0("\\d{2}-",         # 2 digits
+                             "[[:alnum:]]{4})", # 4 alphanumeric characters
+                             "(?![[:alnum:]])"  # The group must at most (?) not (!) be followed
+                                                # by another alphanumeric character
+                             )
 
   output_list <- list(
 
@@ -121,59 +129,36 @@ regex_ids <- function(){
 
     # iGene identifiers
 
+    # iGene core regex
+    "igene_core" = list(
+      "regex" = regex_igene_core
+    ),
+
     # iGene R number
     "igene_rno" = list(
-      "regex" = stringr::regex(
-        r"[
-        (R\d{2}-             # R with 2 digits: R24, R25 etc
-        [[:alnum:]]{4})      # 4 alphanumeric characters
-        (?![[:alnum:]])      # The group must at most (?) not (!) be followed
-                             # by another alphanumeric character
-        ]",
-        comments = TRUE
-      ),
+      "regex" = paste0("(R",
+                       regex_igene_core),
       "igene_rno_group" = 1
-    ),
+      ),
 
     # iGene S number
     "igene_sno" = list(
-      "regex" = stringr::regex(
-        r"[
-        (S\d{2}-             # S with 2 digits
-        [[:alnum:]]{4})      # 4 alphanumeric characters
-        (?![[:alnum:]])      # The group must at most (?) not (!) be followed
-                             # by another alphanumeric character
-        ]",
-        comments = TRUE
-      ),
+      "regex" = paste0("(S",
+                       regex_igene_core),
       "igene_sno_group" = 1
     ),
 
     # iGene D number
     "igene_dno" = list(
-      "regex" = stringr::regex(
-        r"[
-        (D\d{2}-             # D with 2 digits
-        [[:alnum:]]{4})      # 4 alphanumeric characters
-        (?![[:alnum:]])      # The group must at most (?) not (!) be followed
-                             # by another alphanumeric character
-        ]",
-        comments = TRUE
-      ),
+      "regex" = paste0("(D",
+                       regex_igene_core),
       "igene_dno_group" = 1
     ),
 
     # iGene T number
     "igene_tno" = list(
-      "regex" = stringr::regex(
-        r"[
-        (T\d{2}-             # T with 2 digits
-        [[:alnum:]]{4})      # 4 alphanumeric characters
-        (?![[:alnum:]])      # The group must at most (?) not (!) be followed
-                             # by another alphanumeric character
-        ]",
-        comments = TRUE
-      ),
+      "regex" = paste0("(T",
+                       regex_igene_core),
       "igene_tno_group" = 1
     ),
 
