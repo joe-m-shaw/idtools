@@ -1,6 +1,6 @@
 Package: idtools
 Title: Manipulate Lab Identifiers In Strings And Filenames
-Version: 1.0.0
+Version: 1.1.0
 Authors@R: 
     person("Joe M.", "Shaw", , "joseph.shaw2@mft.nhs.uk", role = c("aut", "cre"),
     comment = c(ORCID = "0000-0002-5089-751X"))
