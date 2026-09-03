@@ -53,3 +53,9 @@ test_that("long folderpaths are handled, and first labno is selected", {
   expect_equal(extract_labno(basename(test_filepath)), "23456789")
 
 })
+
+test_that("old 6-digit version of labno from pre-2012 will not be extracted", {
+
+  expect_true(is.na(extract_labno("WS123456_123456")))
+
+})

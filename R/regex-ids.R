@@ -22,10 +22,13 @@
 #' muliple worksheets together.
 #'
 #' **labno**: the numeric identifier given to every DNA sample from DNA
-#' Database. The regex specifies 8 digits in the identifier, although for
-#' samples from 2012 or earlier there will only be 6 digits. This identifier
+#' Database. This identifier
 #' is referred to as "labno" throughout `idtools` because this is the name
 #' used in the "Samples" table of DNA Database.
+#'
+#' The regex specifies 8 digits in the identifier. **Note:** samples from 2012
+#' and earlier have only 6 digits in the identifier, and these will not be
+#' extracted by `idtools`.
 #'
 #' The first two digits of the labno format are the year the sample was received,
 #' and then the digits increase with each new sample. For example, the first
