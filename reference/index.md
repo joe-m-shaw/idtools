@@ -6,10 +6,14 @@
   : Extract combined plate number from a character string
 - [`extract_id()`](https://joe-m-shaw.github.io/idtools/reference/extract_id.md)
   : Extract an identifier using regex
+- [`extract_igene_dno()`](https://joe-m-shaw.github.io/idtools/reference/extract_igene_dno.md)
+  : Extract iGene D number from a character string
 - [`extract_igene_rno()`](https://joe-m-shaw.github.io/idtools/reference/extract_igene_rno.md)
   : Extract iGene R number from a character string
 - [`extract_igene_sno()`](https://joe-m-shaw.github.io/idtools/reference/extract_igene_sno.md)
   : Extract iGene S number from a character string
+- [`extract_igene_tno()`](https://joe-m-shaw.github.io/idtools/reference/extract_igene_tno.md)
+  : Extract iGene T number from a character string
 - [`extract_labno()`](https://joe-m-shaw.github.io/idtools/reference/extract_labno.md)
   : Extract lab number from a string
 - [`extract_suffix()`](https://joe-m-shaw.github.io/idtools/reference/extract_suffix.md)

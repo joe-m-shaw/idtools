@@ -33,10 +33,12 @@ which is "CP" followed by 5 digits. "Combined plates" are created by
 combining muliple worksheets together.
 
 **labno**: the numeric identifier given to every DNA sample from DNA
-Database. The regex specifies 8 digits in the identifier, although for
-samples from 2012 or earlier there will only be 6 digits. This
-identifier is referred to as "labno" throughout `idtools` because this
-is the name used in the "Samples" table of DNA Database.
+Database. This identifier is referred to as "labno" throughout `idtools`
+because this is the name used in the "Samples" table of DNA Database.
+
+The regex specifies 8 digits in the identifier. **Note:** samples from
+2012 and earlier have only 6 digits in the identifier, and these will
+not be extracted by `idtools`.
 
 The first two digits of the labno format are the year the sample was
 received, and then the digits increase with each new sample. For
@@ -51,13 +53,26 @@ variability between different replicates of the same sample.
 
 ## iGene identifiers
 
-**igene_rno**: the R (referral) number from the iGene database has the
-format of R followed by the two-digit year number, a hyphen, and then
-four alpha-numeric charactes. Example: R26-AB12.
+iGene identifiers have a consistent format of a letter signifying the
+identifier type (R, S, D or T), followed by a consistent core identifier
+format.
 
-**igene_sno**: the S (sample) number from the iGene database has the
-same format as the R number (above) but with an S instead of an R a the
-beginning.
+**igene_core**: the core iGene regex consists of the two-digit year
+number, a hyphen, and then four alpha-numeric characters. Example:
+R26-AB12.
+
+**igene_rno**: the R (referral) number. One referral may have more than
+one sample associated with it.
+
+**igene_sno**: the S (sample) number. One sample may have more than one
+DNA extraction derived from it.
+
+**igene_dno**: the D (derivative) number signifies the
+extraction-specific identifier for a sample. One derivative may have
+more than one test associated with it.
+
+**igene_tno**: a T (test) number is given to a specific instance of a
+test performed on a derivate sample.
 
 ## Whole genome sequencing identifiers
 
