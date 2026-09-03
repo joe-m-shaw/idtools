@@ -309,3 +309,45 @@ test_that("informative error is thrown when id_col not supplied", {
                "id_col must be supplied")
 
 })
+
+test_that("all existing identifier columns are replaced", {
+
+  input <- tibble::tibble(
+    filename = "WS123456_12345678a",
+    labno = "old",
+    suffix = "old",
+    worksheet = "old"
+  )
+
+  messages <- capture_messages(output <- mutate_ids(input, filename))
+
+  expect_true(any(grepl("column called worksheet",
+                        messages)))
+
+  expect_true(any(grepl("column called suffix",
+                        messages)))
+
+  expect_true(any(grepl("column called labno",
+                        messages)))
+
+  expect_equal(output$labno, "12345678")
+  expect_equal(output$suffix, "a")
+  expect_equal(output$worksheet, "WS123456")
+})
+
+test_that("missing identifiers produce expected output values", {
+
+  input <- tibble::tibble(
+    filename = c("WS123456_12345678", "WS_missing_12345678"))
+
+  output <- suppressMessages(mutate_ids(input, filename))
+
+  expect_equal(output$labno, c("12345678", "12345678"))
+
+  expect_equal(output$suffix, c("", ""))
+
+  expect_equal(output$worksheet, c("WS123456", NA))
+
+  expect_equal(output$labno_suffix_worksheet,
+               c("12345678_WS123456", "12345678_NA"))
+})

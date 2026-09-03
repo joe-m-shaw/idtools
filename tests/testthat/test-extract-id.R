@@ -99,3 +99,35 @@ test_that("error is thrown if pattern supplied in wrong format", {
 
 })
 
+test_that("core iGene regex works when combined with fictional new identifier", {
+
+  expect_equal(extract_id(input = "A new iGene Z identifier has been introduced. Example: Z25-12AB",
+             pattern = paste0("(Z",
+                              regex_ids()$igene_core$regex),
+             group = 1),
+             "Z25-12AB")
+
+})
+
+test_that("error is thrown when a vector contains NA", {
+  expect_error(
+    extract_id(
+      input = c("WS123456_12345678", NA),
+      pattern = "(\\d{8})",
+      group = 1
+    ),
+    regexp = "input must not contain NA values"
+  )
+})
+
+test_that("error is thrown when a vector contains whitespace", {
+  expect_error(
+    extract_id(
+      input = c("WS123456_12345678", " "),
+      pattern = "(\\d{8})",
+      group = 1
+    ),
+    regexp = "input must not be empty or contain only whitespace"
+  )
+})
+

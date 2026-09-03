@@ -20,7 +20,10 @@ library(idtools)
 to make manipulating lab identifiers easier. A few key design choices of 
 `idtools` are summarised below.
 
-# Why is there no `extract_patient_name` function?
+`idtools` is intended for pseudonymised identifiers, which is why functions for
+working with NHS numbers, names or dates of birth are not included.
+
+# Could you add an `extract_patient_name` function?
 
 There is no function for extracting patient names in `idtools` for the following reasons:
 

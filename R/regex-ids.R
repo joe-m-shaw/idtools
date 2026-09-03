@@ -22,10 +22,13 @@
 #' muliple worksheets together.
 #'
 #' **labno**: the numeric identifier given to every DNA sample from DNA
-#' Database. The regex specifies 8 digits in the identifier, although for
-#' samples from 2012 or earlier there will only be 6 digits. This identifier
+#' Database. This identifier
 #' is referred to as "labno" throughout `idtools` because this is the name
 #' used in the "Samples" table of DNA Database.
+#'
+#' The regex specifies 8 digits in the identifier. **Note:** samples from 2012
+#' and earlier have only 6 digits in the identifier, and these will not be
+#' extracted by `idtools`.
 #'
 #' The first two digits of the labno format are the year the sample was received,
 #' and then the digits increase with each new sample. For example, the first
@@ -40,13 +43,24 @@
 #'
 #' @section iGene identifiers:
 #'
-#' **igene_rno**: the R (referral) number from the iGene database has the format
-#' of R followed by the two-digit year number, a hyphen, and then four
-#' alpha-numeric charactes. Example: R26-AB12.
+#' iGene identifiers have a consistent format of a letter signifying the
+#' identifier type (R, S, D or T), followed by a consistent core identifier format.
 #'
-#' **igene_sno**: the S (sample) number from the iGene database has the same
-#' format as the R number (above) but with an S instead of an R a the
-#' beginning.
+#' **igene_core**: the core iGene regex consists of the two-digit year number,
+#' a hyphen, and then four alpha-numeric characters. Example: R26-AB12.
+#'
+#' **igene_rno**: the R (referral) number. One referral may have more than
+#' one sample associated with it.
+#'
+#' **igene_sno**: the S (sample) number. One sample may have more than
+#' one DNA extraction derived from it.
+#'
+#' **igene_dno**: the D (derivative) number signifies the
+#' extraction-specific identifier for a sample. One derivative may have more than
+#' one test associated with it.
+#'
+#' **igene_tno**: a T (test) number is given to a specific instance of a test
+#' performed on a derivate sample.
 #'
 #' @section Whole genome sequencing identifiers:
 #'
@@ -69,7 +83,15 @@
 #'
 regex_ids <- function(){
 
+  regex_igene_core <- paste0("\\d{2}-",         # 2 digits
+                             "[[:alnum:]]{4})", # 4 alphanumeric characters
+                             "(?![[:alnum:]])"  # The group must at most (?) not (!) be followed
+                                                # by another alphanumeric character
+                             )
+
   output_list <- list(
+
+    ## DNA Database identifiers
 
     # Worksheet
     "worksheet" = list(
@@ -81,6 +103,18 @@ regex_ids <- function(){
         ]",
         comments = TRUE),
       "worksheet_group" = 2),
+
+    # Combined plate number
+    "combined_plate" = list(
+      "regex" = stringr::regex(
+        r"[
+        (CP\d{5}|cp\d{5})    # CP or cp followed by 5 digits
+        (\D+|$)              # Either a non-digit character or end of the string
+        ]",
+        comments = TRUE
+      ),
+      "combined_plate_group" = 1
+    ),
 
     # Lab number and suffix
     "labno_suffix" = list(
@@ -96,45 +130,42 @@ regex_ids <- function(){
       "labno_group" = 2,
       "suffix_group" = 3),
 
+    # iGene identifiers
+
+    # iGene core regex
+    "igene_core" = list(
+      "regex" = regex_igene_core
+    ),
+
     # iGene R number
     "igene_rno" = list(
-      "regex" = stringr::regex(
-        r"[
-        (R\d{2}-             # R with 2 digits: R24, R25 etc
-        [[:alnum:]]{4})      # 4 alphanumeric characters
-        (?![[:alnum:]])      # The group must at most (?) not (!) be followed
-                             # by another alphanumeric character
-        ]",
-        comments = TRUE
-      ),
+      "regex" = paste0("(R",
+                       regex_igene_core),
       "igene_rno_group" = 1
-    ),
+      ),
 
     # iGene S number
     "igene_sno" = list(
-      "regex" = stringr::regex(
-        r"[
-        (S\d{2}-             # S with 2 digits
-        [[:alnum:]]{4})      # 4 alphanumeric characters
-        (?![[:alnum:]])      # The group must at most (?) not (!) be followed
-                             # by another alphanumeric character
-        ]",
-        comments = TRUE
-      ),
+      "regex" = paste0("(S",
+                       regex_igene_core),
       "igene_sno_group" = 1
     ),
 
-    # Combined plate number
-    "combined_plate" = list(
-      "regex" = stringr::regex(
-        r"[
-        (CP\d{5}|cp\d{5})    # CP or cp followed by 5 digits
-        (\D+|$)              # Either a non-digit character or end of the string
-        ]",
-        comments = TRUE
+    # iGene D number
+    "igene_dno" = list(
+      "regex" = paste0("(D",
+                       regex_igene_core),
+      "igene_dno_group" = 1
     ),
-    "combined_plate_group" = 1
+
+    # iGene T number
+    "igene_tno" = list(
+      "regex" = paste0("(T",
+                       regex_igene_core),
+      "igene_tno_group" = 1
     ),
+
+    ## Whole genome sequencing identifiers
 
     # WGS patient number
     "wgs_patient_no" = list(
